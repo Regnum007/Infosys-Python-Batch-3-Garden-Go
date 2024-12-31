@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .cart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .cart-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 280px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px;
+        }
+        .cart-card img {
+            width: 100%;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+        .cart-card h2 {
+            font-size: 1.2em;
+            margin: 0;
+        }
+        .cart-card p {
+            margin: 10px 0;
+        }
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .quantity-btn {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .remove-btn {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .delete-cart {
+            margin-top: 30px;
+            background-color: #dc3545;
+            padding: 15px 30px;
+            border: none;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .cart-actions {
+            margin-top: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Cart</h1>
+        <a href="{{ url_for('app.product_list') }}" class="quantity-btn m-3 w-25 " style="margin-left: 40px;">Back to Products</a>
+    </div>
+        {% if cart %}
+        <div class="cart-container">
+            {% for item in cart %}
+            <div class="cart-card">
+                <img src="/static/{{ item.image_url }}" alt="{{ item.name }}" style="width: 200px; height: 200px;">
+                <h2>{{ item.name }}</h2>
+                <p>Price: INR {{ item.price }}</p>
+                
+                <div class="actions">
+                    <form action="{{ url_for('cart.decrement_quantity', product_id=item.product_id) }}" method="POST">
+                        <button type="submit" class="quantity-btn">-</button>
+                    </form>
+                    <p>Quantity: {{ item.quantity }}</p>
+                    <form action="{{ url_for('cart.increment_quantity', product_id=item.product_id) }}" method="POST">
+                        <button type="submit" class="quantity-btn">+</button>
+                    </form>
+                </div>
+                
+                <p>Weight: {{ item.weight }}g</p>
+                <p><strong>Total (Item): INR {{ item.price * item.quantity }}</strong></p>
+                
+                <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="POST">
+                    <button type="submit" class="remove-btn">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Shipping and Total Section -->
+        <div style="text-align: center;">
+            {% if session.get('city') and session.get('zipcode') %}
+        <p class="mt-3 fw-bold" style="color: #86d68b;">
+            Location: {{ session['city'] }}, {{ session['zipcode'] }}
+        </p>
+    {% endif %}
+            {% if free_shipping %}
+                <p><strong>Shipping:</strong> Free</p>
+            {% else %}
+                <p><strong>Shipping Cost:</strong> INR {{ shipping_cost }}</p>
+            {% endif %}
+            
+            <p><strong>Grand Total: INR {{ grand_total }}</strong></p>
+        </div>    
+    
+        <!-- Cart Actions -->
+        <div class="cart-actions">
+            <form action="{{ url_for('cart.checkout') }}" method="POST">
+                <button type="submit" class="quantity-btn m-3 w-25">Buy Now</button>
+            </form>
+    
+            <form action="{{ url_for('cart.delete_cart') }}" method="POST">
+                <button type="submit" class="delete-cart m-3 w-25">Clear Cart</button>
+            </form>
+    
+          
+    
+    {% else %}
+        <p>Your cart is empty. <a href="{{ url_for('app.product_list') }}">Continue Shopping</a></p>
+    {% endif %}
+    
+    </div>
+</body>
+</html>
