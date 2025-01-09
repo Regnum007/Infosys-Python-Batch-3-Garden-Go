@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+    <title>Request Password Reset</title>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category,message in messages%}
+            <div class="{{ category }}">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <h1>Request Password Reset</h1>
+    <form class="signup-form" action="{{ url_for('logint1.request_reset') }}" method="POST">
+        <div class="form-group">
+            <label for="email">Enter your email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <div id="email-error" class="error"></div>
+        </div>
+        <button type="submit" class="submit-btn">Send OTP</button>
+    </form>
+</body>
+</html>

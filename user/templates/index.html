@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white my-2">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{{url_for('static', filename='images/logo.png')}}" width="130" height="50" alt="Logo" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold mt-1" href="{{ url_for('logint1.index') }}" style="color: #86d68b;">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold mt-1" href="{{ url_for('logint1.about') }}" style="color: #86d68b;">About</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold ms-3 mt-1" href="#" role="button" data-bs-toggle="dropdown" style="color: #86d68b;">
+                            Category
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('customert2.filter_category', category='Seeds') }}">Seeds</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('customert2.filter_category', category='Plants') }}">Plants</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('customert2.filter_category', category='Wild edible plants') }}">Wild Edible Plants</a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Search Bar -->
+                    <form class="d-flex" action="{{ url_for('customert2.product_list') }}" method="get">
+                        <input class="form-control me-2" type="search" name="query" placeholder="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </ul>
+                
+                <!-- Login and Signup Buttons -->
+                <a href="{{ url_for('logint1.login') }}" class="btn btn-outline-primary me-2">Login</a>
+                <a href="{{ url_for('logint1.signup') }}" class="btn btn-primary">Signup</a>
+            </div>
+        </div>
+    </nav>
+    <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body {
+            flex-grow: 1;
+        }
+        input::placeholder {
+            color: #86d68b;
+            font-size: 14px;
+        }
+    </style>
+    <!-- Product List Section -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">All Products</h2>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for product in products %}
+                <div class="col">
+                    <a href="{{ url_for('customert2.product_detail', id=product.product_id) }}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">Category: {{ product.category_name }}</p>
+                                <p class="card-text">Weight: {{ product.weight }} g</p>
+                                <p class="card-text">Price: INR {{ product.selling_price }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% else %}
+                <p class="text-center">No products found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 bg-dark text-white mt-5">
+        <p>&copy; 2024 Web App. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

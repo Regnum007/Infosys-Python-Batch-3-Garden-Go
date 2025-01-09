@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+    <title>User Address Form</title>
+    <style>
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 18.75rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: #ffffff;
+        }
+        .form-container h2 {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category,message in messages%}
+            <div class="{{ category }}">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="form-container">
+        <h2>Address Form</h2>
+        <form action="/add-address" method="POST">
+
+            <!-- Street Address Field -->
+            <div class="form-group">
+                <label for="street_address">Street Address:</label>
+                <input type="text" id="street_address" name="street_address" required>
+            </div>
+
+            <!-- Locality Field -->
+            <div class="form-group">
+                <label for="locality">Locality:</label>
+                <input type="text" id="locality" name="locality" required>
+            </div>
+
+            <!-- City Field -->
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+
+            <!-- State Field -->
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state">
+            </div>
+
+            <!-- Postal Code Field -->
+            <div class="form-group">
+                <label for="postal_code">Postal Code:</label>
+                <input type="text" id="postal_code" name="postal_code" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <input type="submit" class="submit-btn" value="Submit">
+            </div>
+        </form>
+    </div>
+</body>
+<script src="{{url_for('static',filename='js/login.js')}}"></script>
+</html>
+

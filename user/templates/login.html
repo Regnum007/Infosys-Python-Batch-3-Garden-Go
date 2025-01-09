@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+
+    <title>Login</title>
+    <style>
+        a{
+        text-decoration:none;}
+    </style>
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category,message in messages%}
+            <div class="{{ category }}">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form class="signup-form" action="/login" method="POST" onsubmit="validateloginForm(event)">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email"  required>
+            <div id="email-error" class="error"></div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <span id="toggle-password" class="password-toggle" onclick="togglePasswordVisibility()">👁️</span>
+            </div>
+            <div id="password-error" class="error"></div>
+        </div>
+        <div style="margin-bottom:10px;justify-content: space-between;display: flex;">
+            <a href="{{ url_for('logint1.request_reset') }}">Forgot Password</a>
+<a href="{{ url_for('logint1.signup') }}">Create account</a>
+
+        </div>
+
+        <button type="submit" class="submit-btn">Login</button>
+    </form>
+</body>
+<script src="{{url_for('static',filename='js/login.js')}}"></script>
+</html>

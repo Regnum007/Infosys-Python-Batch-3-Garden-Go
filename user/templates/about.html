@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Go Garden</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="shortcut icon" href="{{url_for('static',filename='images/img.ico')}}" type="image/x-icon" />
+  </head>
+  <body>
+    <header class="header">
+      <section class="flex">
+        <a href="#" class="logo"><img src="{{url_for('static',filename='images/logo.png')}}" alt="" /></a>
+
+        <nav class="navbar">
+          <a href="#home">home</a>
+          <a href="#about">about</a>
+          <a href="#Products">Products</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div id="menu-btn" class="fas fa-bars"></div>
+      </section>
+      <!--used to group together related elements-->
+    </header>
+
+    <div class="home-bg">
+      <section class="home" id="home">
+        <div class="content">
+          <h3>Fast and Eco-Friendly Courier Services for your Garden Needs</h3>
+          <p>
+            Connect with reliable courier services specialized in delivery
+            garden suppiles,plants and tools night to your doorstep
+          </p>
+            <a href="/signup" class="btn">Sign Up</a>
+            <a href="/login" class="btn">Login</a>
+        </div>
+      </section>
+    </div>
+
+    <section class="about" id="about">
+      <div class="image">
+        <img
+          src="https://wallpapers.com/images/featured/tree-background-xgzu0ujdd4khh95j.jpg"
+          alt=""
+        />
+      </div>
+      <div class="content">
+        <h3 style="font-size: 3rem; font-weight: 600; color: #0ed80a">
+          About Garden Auto Courier Connect
+        </h3>
+        <p>
+          Garden Auto Courier Connect specializes in eco-friendly delivery
+          services for garden supplies. Our mission is to provide a sustainable
+          solution for garden enthusiasts by ensuring fast, reliable, and
+          environmentally conscious deliveries.
+        </p>
+        <a href="{{ url_for('logint1.index') }}" class="btn btn-primary">visit our products</a>
+      </div>
+    </section>
+
+    <section class="facility">
+      <div class="heading">
+        <!-- <img
+          src="images/heading-img.png"
+          alt=""
+          style="height: 10rem; width: 15rem"
+        /> -->
+        <h3 id="Products">Our Products</h3>
+
+        <p>
+          We offer a wide range of gardening tools ,seeds,fertilizers,and
+          eco-friendly plant transport solutions tailored for your needs
+        </p>
+      </div>
+
+      <div class="box-container">
+        <div class="box">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6SqCfVLKEyD1hZ6XZwxAnFtCHMH9CQ2DatQ&s"
+            alt=""
+            style="height: 10rem; width: 10rem"
+          />
+          <h3>Varities of Plants</h3>
+          <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta,
+            earum?
+          </p>
+        </div>
+
+        <div class="box">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIsRvwzxJs1uM4M-ienmik8-WjtOJqsVaBRQ&s"
+            alt=""
+            style="height: 10rem; width: 10rem"
+          />
+          <h3>Varities of seeds</h3>
+          <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta,
+            earum?
+          </p>
+        </div>
+
+        <div class="box">
+          <img
+            src="https://www.birdsandblooms.com/wp-content/uploads/2021/03/whimsical-evergreen-garden.jpg?fit=680%2C331"
+            alt=""
+            style="height: 8rem; width: 8rem"
+          />
+          <h3>Varitiesof trees</h3>
+          <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta,
+            earum?
+          </p>
+        </div>
+
+        <div class="box">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8Y2Kk9KGVQWNWaw1Ffl35V_SJYkfQgTjM3s1StTA1Zev0XGu-J8tQtJQyiYFdrmP1gKM&usqp=CAU"
+            alt=""
+            style="height: 7rem; width: 7rem"
+          />
+          <h3>Different tools</h3>
+          <p>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta,
+            earum?
+          </p>
+        </div>
+      </div>
+    </section>
+   
+    <section class="contact" id="contact">
+      <div class="heading">
+        <h3>contact us</h3>
+      </div>
+
+      <div class="row">
+        <div class="image">
+          <img
+            src="https://img.freepik.com/premium-photo/poster-people-that-are-holding-flowers_862994-501408.jpg"
+            alt=""
+          />
+        </div>
+
+        <form action="" method="">
+          <h3>Book your Slot</h3>
+          <input
+            type="text"
+            name="name"
+            required
+            class="box"
+            maxlength="20"
+            placeholder="enter your name"
+          />
+          <input
+            type="number"
+            name="number"
+            required
+            class="box"
+            maxlength="20"
+            placeholder="enter your number"
+            min="0"
+            max="9999999999"
+            onkeypress="if(this.value.length == 10) return false"
+          />
+          <input
+            type="number"
+            name="guests"
+            required
+            class="box"
+            maxlength="20"
+            placeholder="No.of Plants required"
+            min="0"
+            max="99"
+            onkeypress="if(this.value.length==2)return false"
+          />
+          <input type="submit" name="send" value="send message" class="btn" />
+        </form>
+      </div>
+    </section>
+
+    <section class="footer">
+      <div class="box-container">
+        <div class="box">
+          <i class="fas fa-envelope"></i>
+          <h3>our email</h3>
+          <p>goGarden@gmail.com</p>
+          <p>Garden7@gmail.com</p>
+        </div>
+        <div class="box">
+          <i class="fas fa-clock"></i>
+          <h3>opening hours</h3>
+          <p>07:00am to 09:00pm</p>
+        </div>
+        <div class="box">
+          <i class="fas fa-map-marker-alt"></i>
+          <h3>shop location</h3>
+          <p>Singinagar-Vijayawada 520015</p>
+        </div>
+        <div class="box">
+          <i class="fas fa-phone"></i>
+          <h3>our number</h3>
+          <p>+1234567890</p>
+        </div>
+      </div>
+      <div class="credit">
+        &copy;copyright 2024 by <span>front-end</span>|all rights reserved!
+      </div>
+    </section>
+
+    <script src="{{url_for('static',filename='js/index.js')}}"></script>
+  </body>
+</html>

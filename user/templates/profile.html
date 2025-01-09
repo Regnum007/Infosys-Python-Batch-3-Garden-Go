@@ -1,0 +1,79 @@
+{% extends 'customer.html' %}
+{% block head %}
+<title>Profile</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="form-container">
+        <h2>Profile</h2>
+        <form id="profileForm" method="POST" action="{{ url_for('logint1.profile') }}">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="{{ user.name }}" required>
+                <span id="nameError" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                <span id="emailError" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile No:</label>
+                <input type="tel" id="mobile" name="mobile" value="{{ user.phone_number }}" required>
+                <span id="mobileError" class="text-danger"></span>
+            </div>
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('profileForm');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const mobileInput = document.getElementById('mobile');
+
+    const nameError = document.getElementById('nameError');
+    const emailError = document.getElementById('emailError');
+    const mobileError = document.getElementById('mobileError');
+
+    // Regular expressions for validation
+    const nameRegex = /^[A-Za-z\s]{2,}$/;
+    const mobileRegex = /^\d{10}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    form.addEventListener('submit', (e) => {
+        let isValid = true;
+
+        // Validate Name
+        if (!nameRegex.test(nameInput.value)) {
+            nameError.textContent = 'Name must contain only alphabets.';
+            isValid = false;
+        } else {
+            nameError.textContent = '';
+        }
+
+        // Validate Email
+        if (!emailRegex.test(emailInput.value.trim())) {
+            emailError.textContent = 'Enter a valid email.';
+            isValid = false;
+        } else {
+            emailError.textContent = '';
+        }
+
+        // Validate Mobile Number
+        if (!mobileRegex.test(mobileInput.value)) {
+            mobileError.textContent = 'Mobile number must be a 10-digit number.';
+            isValid = false;
+        } else {
+            mobileError.textContent = '';
+        }
+
+        // Submit the form if all validations pass
+        if (!isValid) {
+            e.preventDefault();  // Prevent form submission if invalid
+        }
+    });
+</script>
+{% endblock %}

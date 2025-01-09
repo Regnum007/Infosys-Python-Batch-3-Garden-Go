@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+
+    <title>Sign Up</title>
+</head>
+
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category,message in messages%}
+            <div class="{{ category }}">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form class="signup-form" action="/signup" method="POST" onsubmit="validatesignupForm(event)">
+        <h2>Signup</h2>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            <div id="name-error" class="error"></div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <div id="email-error" class="error"></div>
+        </div>
+        <div class="form-group">
+            <label for="mobile">Mobile No</label>
+            <input type="tel" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
+            <div id="mobile-error" class="error"></div>
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" name="role" onchange="toggleSecretKeyField()" required>
+                <option value="customer" selected>Customer</option>
+                <option value="courier">Courier</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <span id="toggle-password" class="password-toggle" onclick="togglePasswordVisibility()">👁️</span>
+            </div>
+            <div id="password-error" class="error"></div>
+        </div>
+        <div class="form-group hidden" id="secret-key-group">
+            <label for="admin-key">Secret Key</label>
+            <input type="text" id="admin-key" name="admin-key" placeholder="Enter secret key">
+            <div id="secret-key-error" class="error"></div>
+        </div>
+        <div style="margin-bottom:10px;"><a href="/login" >Already have an account?</a></div>
+        <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+</body>
+<script src="{{url_for('static',filename='js/login.js')}}"></script>
+</html>
+
