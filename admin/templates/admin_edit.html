@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <nav class="navbar navbar-expand-lg bg-white">
+        <div class="container-fluid">
+            <p class="navbar-brand ms-2 mb-2 mt-2" href="{{ url_for('logint1.index') }}" style="font-size: 2rem; color: #86d68b; font-weight: bold;">Courier</p>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold mt-1" href="{{ url_for('logint1.index') }}" style="color: #86d68b;">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold ms-3 mt-1" href="#" role="button" data-bs-toggle="dropdown" style="color: #86d68b;">
+                            Category
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('customert2.filter_category', category='Seeds') }}">Seeds</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('customert2.filter_category', category='Plants') }}">Plants</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('customert2.filter_category', category='Wild edible plants') }}">Wild Edible Plants</a></li>
+                        </ul>
+                    </li>
+                    
+                    <form class="d-flex" action="{{ url_for('customert2.product_list') }}" method="get">
+                        <input class="form-control me-2" type="search" name="query" placeholder="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                    
+                </ul>
+               
+             
+                   
+                    <span class="me-2" style="color: #86d68b;">Welcome, {{ user.name or admin.name if user or admin else 'Admin' }}</span>
+
+                    <div class="dropdown">
+                      <a
+                        href="#"
+                        class="d-flex align-items-center text-decoration-none dropdown-toggle"
+                        id="profileDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                      <i class="fa fa-user fa-2x" style="color: #86d68b;"></i>
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="{{url_for('logint1.profile')}}">Update Profile</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('logint1.change_password')}}">Change Password</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('logint1.address')}}">Address</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{url_for('logint1.logout')}}">Logout</a></li>
+                      </ul>
+                    </div>
+               
+            </div>
+        </div>
+    </nav>
+
+    <style>
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body {
+            flex-grow: 1;
+        }
+        input::placeholder {
+            color: #86d68b;
+            font-size: 14px;
+        }
+    </style>
+    </head>
+<body>
+    <div class="d-flex flex-column align-items-center justify-content-center vh-100 text-center">
+        <h1 class="mb-4">You Can Edit The Product</h1>
+        <div>
+            <a href="{{ url_for('admint2.add_product') }}" class="btn btn-primary btn-lg m-3">ADD PRODUCT</a>
+            <a href="{{ url_for('admint2.delete_products') }}" class="btn btn-primary btn-lg m-3">DELETE THE PRODUCT</a>
+            <a href="{{ url_for('admint2.recovery_products') }}" class="btn btn-primary btn-lg m-3">RECOVER THE DELETED PRODUCTS</a>
+            
+            <a href="{{ url_for('admint2.modify_products') }}" class="btn btn-primary btn-lg m-3">MODIFY EXISTING PRODUCT</a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

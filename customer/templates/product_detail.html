@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Product Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card img {
+            height: 200px;
+            object-fit: cover;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 0.9rem;
+        }
+        input::placeholder {
+            color: #86d68b; 
+            font-size: 14px;
+        }
+        .product-image {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+        }
+
+       
+        @media (max-width: 480px) {
+            .navbar .navbar-nav {
+                display: none; 
+            }
+            .navbar .navbar-collapse {
+                display: none;
+            }
+            .navbar .navbar-nav {
+                display: block; 
+            }
+
+           
+            .mobile-location-inputs {
+                display: block;
+                margin-top: 20px;
+            }
+        }
+
+      
+        @media (min-width: 481px) {
+            .navbar .navbar-nav {
+                display: flex; 
+            }
+            .navbar .navbar-toggler {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{{url_for('static', filename='images/logo.png')}}" width="130" height="50" alt="Logo" />
+            </a>
+           
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold mt-1" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: large; color: #86d68b;" aria-current="page" href="{{ url_for('logint1.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold mt-1" href="{{ url_for('logint1.about') }}" style="color: #86d68b; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;font-size: large;">About</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-bold ms-3 mt-1" style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: large; color: #86d68b;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Category
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" style="color: #86d68b;" href="{{ url_for('customert2.filter_category', category='Seeds') }}">Seeds</a></li>
+                            <li><a class="dropdown-item" style="color: #86d68b;" href="{{ url_for('customert2.filter_category', category='Plants') }}">Plants</a></li>
+                            <li><a class="dropdown-item" style="color: #86d68b;" href="{{ url_for('customert2.filter_category', category='Herbs') }}">Herbs</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a href="{{ url_for('customert2.view_cart') }}" class="btn btn-success me-4">
+                        <i class="fa fa-shopping-cart"></i> Cart
+                    </a>
+                <div class="d-flex flex-wrap">
+                    
+                    <form class="d-flex me-3" action="{{ url_for('customert2.product_list') }}" method="get" role="search">
+                        <input class="form-control form-control-lg me-2" style="color: #86d68b;" type="search" name="query" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit" style="color: #86d68b; width: 100px;">Search</button>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-12">
+                <img src="/static/{{ product.image_url }}" class="img-fluid product-image" style="height: 450px; width: 500px;" alt="{{ product.name }}">
+            </div>
+            <div class="col-md-6 col-12">
+                <h1>{{ product.name }}</h1>
+                <p><strong>Category: </strong> {{ product.category_name }}</p>
+                <p><strong>Description: </strong>{{ product.description }}</p>
+                <p><strong>Weight: </strong>{{ product.weight }} g</p>
+                <p><strong>Price: </strong>INR {{ product.selling_price }}</p>
+                <p><strong>Stock: </strong>{{ product.stock_quantity }}</p>
+                <h3>Total Price (Including Shipping): INR {{ total_price }}</h3>
+                {% if free_shipping %}
+                    <p><strong>Shipping: </strong> Free</p>
+                {% endif %}
+                <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" class="btn btn-primary m-2">Buy Now</a>
+                <a href="{{ url_for('customert2.add_to_cart', product_id=product.product_id) }}" class="btn btn-success m-2">Add to Cart</a>
+
+
+                
+                <div class="mobile-location-inputs">
+                    <form action="{{ url_for('customert2.set_location') }}" method="POST">
+                        <input class="form-control me-2 mb-3" type="text" style="width: 100%;" name="zipcode" placeholder="Zipcode" required>
+                        <input class="form-control me-2 mb-3" type="text" style="width: 100%;" name="city" placeholder="City" required>
+                        <button class="btn btn-outline-success w-100" type="submit">Set Location</button>
+                    </form>
+
+                    {% if session.get('city') and session.get('zipcode') %}
+                        <p class="mt-3 fw-bold" style="color: #86d68b;">
+                            Location: {{ session['city'] }}, {{ session['zipcode'] }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-5">Similar Products</h3>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for other_product in other_products %}
+                <div class="col">
+                    <a href="{{ url_for('customert2.product_detail', id=other_product.product_id) }}" class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <img src="/static/{{ other_product.image_url }}" class="card-img-top" alt="{{ other_product.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ other_product.name }}</h5>
+                                <p class="card-text">Category: {{ other_product.category_name }}</p>
+                                <p class="card-text">Price: INR {{ other_product.selling_price }}</p>
+                                <p class="card-text">Description: {{ other_product.description }}</p>
+                                <p class="card-text">Weight: {{ other_product.weight }}g</p>
+                                <a href="{{ url_for('customert2.product_detail', id=other_product.product_id) }}" class="btn btn-secondary mt-2">View Details</a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <a href="{{ url_for('customert2.product_list') }}" class="btn btn-secondary mt-4">Back to Products</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

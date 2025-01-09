@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <style>
+        .card {
+            position: relative;
+        }
+        .card a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .card button {
+            
+            bottom: 0;
+            right: 0;
+            margin: 10px;
+        }
+    </style>
+    <div class="container my-5">
+        <a href="{{ url_for('admint2.edit_product') }}" class="btn btn-primary btn-lg m-3">BACK TO ADMIN MODE</a>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-8 g-4">
+            
+            {% for product in products %}
+            <div class="col">
+                
+                <div class="card">
+                    
+                    <img src="{{ url_for('static',filename= product.image_url) }}" height="300" width="300" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">Category: {{ product.category_name }}</p>
+                        <p class="card-text">Description: {{ product.description }}</p>
+                        <p class="card-text">Weight: {{ product.weight }}</p>
+                        <p class="card-text">Price: {{ product.selling_price }}</p>
+                        
+                        <form method="POST" action="{{ url_for('admint2.modify_products') }}" enctype="multipart/form-data">
+                            <input type="hidden" name="product_name" value="{{ product.name }}"> <!-- Hidden input for product name -->
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter new name" value="{{ product.name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="category_name" class="form-label">Category</label>
+                                <input type="text" class="form-control" id="category_name" name="category_name" placeholder="Enter new category" value="{{ product.category_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="2" placeholder="Enter new description">{{ product.description }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="weight" class="form-label">Weight</label>
+                                <input type="text" class="form-control" id="weight" name="weight" placeholder="Enter new weight" value="{{ product.weight }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="text" class="form-control" id="price" name="price" placeholder="Enter new price" value="{{ product.selling_price }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="stock_quantity" class="form-label">stock</label>
+                                <input type="text" class="form-control" id="stock_quantity" name="stock_quantity" placeholder="Enter new stock" value="{{ product.stock_quantity }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="image_file" class="form-label">Upload New Image</label>
+                                <input type="file" class="form-control" id="image_file" name="image_file">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Modify</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

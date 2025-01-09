@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Checkout</h1>
+        
+        {% if cart %}
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                    <tr>
+                        <td><img src="{{ item.image_url }}" alt="{{ item.name }}" width="70"></td>
+                        <td>{{ item.name }}</td>
+                        <td>${{ item.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ item.price * item.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="total">
+                <p><strong>Total Amount: </strong> ${{ total_price }}</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('customert2.checkout') }}">
+                <label for="shipping_address">Shipping Address:</label>
+                <input type="text" name="shipping_address" required>
+
+                <button type="submit">Place Order</button>
+            </form>
+        {% else %}
+            <p>Your cart is empty. <a href="{{ url_for('customert2.product_list') }}">Continue Shopping</a></p>
+        {% endif %}
+
+        <a href="{{ url_for('customert2.view_cart') }}" class="back">Back to Cart</a>
+    </div>
+</body>
+</html>
