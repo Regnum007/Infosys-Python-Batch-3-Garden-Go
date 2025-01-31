@@ -20,9 +20,10 @@
         <a href="#" class="logo"><img src="{{url_for('static',filename='images/logo.png')}}" alt="" /></a>
 
         <nav class="navbar">
-          <a href="#home">home</a>
+          <a href="javascript:history.back()" class="btn btn-secondary mb-4" style="background-color: rgb(40, 193, 40); color: white;">Back</a>
+ 
           <a href="#about">about</a>
-          <a href="#Products">Products</a>
+          <a href="{{ url_for('logint1.login') }}">Products</a> 
           <a href="#contact">Contact</a>
         </nav>
         <div id="menu-btn" class="fas fa-bars"></div>
@@ -38,8 +39,7 @@
             Connect with reliable courier services specialized in delivery
             garden suppiles,plants and tools night to your doorstep
           </p>
-            <a href="/signup" class="btn">Sign Up</a>
-            <a href="/login" class="btn">Login</a>
+            
         </div>
       </section>
     </div>

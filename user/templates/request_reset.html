@@ -19,11 +19,14 @@
     {% endwith %}
     <h1>Request Password Reset</h1>
     <form class="signup-form" action="{{ url_for('logint1.request_reset') }}" method="POST">
+        <button onclick="window.location.href='{{url_for('logint1.login')}}'" style="border: 1px solid #6c757d; color: black; background: transparent; border-radius: 8px; padding: 5px" onmouseover="this.style.background= '#6c757d';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='#6c757d'">← Go Back</button>
+        <br><br>
         <div class="form-group">
             <label for="email">Enter your email:</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
             <div id="email-error" class="error"></div>
         </div>
+
         <button type="submit" class="submit-btn">Send OTP</button>
     </form>
 </body>

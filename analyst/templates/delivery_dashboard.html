@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #e0f7fa, #e8f5e9);
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: #004d40;
+            color: white;
+            padding: 20px 0;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0;
+        }
+
+        form#analysisForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        label {
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .top-inputs {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-boxes {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            flex: 1;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background: #004d40;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #029078;
+        }
+
+        .charts-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 90%;
+            height: 400px !important;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 768px) {
+            input,
+            select {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .top-inputs {
+                flex-direction: column;
+            }
+
+            .input-boxes {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Delivery Dashboard</h1>
+
+    <form id="analysisForm">
+        <div class="top-inputs">
+            <div class="input-row">
+                <div>
+                    <label for="analysisType">Select Analysis Type:</label>
+                    <select id="analysisType" onchange="updateInputFields()">
+                        <option value="daily" selected>Day-to-Day</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label>Start:</label>
+                    <input type="date" id="startDate">
+                    <input type="month" id="startMonthYear" style="display: none;">
+                    <input type="number" id="startYearOnly" placeholder="YYYY" style="display: none;">
+                </div>
+
+                <div>
+                    <label>End:</label>
+                    <input type="date" id="endDate">
+                    <input type="month" id="endMonthYear" style="display: none;">
+                    <input type="number" id="endYearOnly" placeholder="YYYY" style="display: none;">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-buttons">
+            <button id="graphButton" type="button" onclick="generateGraphs('histogram')" disabled>Delivery Histogram</button>
+            <button id="pieChartButton" type="button" onclick="generateGraphs('pie')" disabled>On-Time Delivery Chart</button>
+        </div>
+    </form>
+
+    <div class="charts-container">
+        <canvas id="histogramChart"></canvas>
+        <canvas id="pieChart" style="display: none;"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let deliveryData = [];
+        let charts = {};
+
+        async function loadSQLData() {
+            try {
+                console.log('Starting to load data...');
+                const response = await fetch('/api/delivery-data');
+                const data = await response.json();
+                console.log('Data received:', data);
+
+                if (data && Array.isArray(data)) {
+                    deliveryData = data;
+                    document.getElementById('graphButton').disabled = false;
+                    document.getElementById('pieChartButton').disabled = false;
+                } else {
+                    console.error('Invalid data format received');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateInputFields() {
+            const analysisType = document.getElementById("analysisType").value;
+
+            document.getElementById("startDate").style.display = analysisType === "daily" ? "block" : "none";
+            document.getElementById("endDate").style.display = analysisType === "daily" ? "block" : "none";
+
+            document.getElementById("startMonthYear").style.display = analysisType === "monthly" ? "block" : "none";
+            document.getElementById("endMonthYear").style.display = analysisType === "monthly" ? "block" : "none";
+
+            document.getElementById("startYearOnly").style.display = analysisType === "yearly" ? "block" : "none";
+            document.getElementById("endYearOnly").style.display = analysisType === "yearly" ? "block" : "none";
+        }
+
+        function generateGraphs(chartType) {
+            if (!deliveryData.length) {
+                alert("Data is still loading. Please wait.");
+                return;
+            }
+
+            const analysisType = document.getElementById("analysisType").value;
+            let filteredData = [];
+
+            if (analysisType === "daily") {
+                const startDate = document.getElementById("startDate").value;
+                const endDate = document.getElementById("endDate").value;
+                filteredData = deliveryData.filter(item => item.date >= startDate && item.date <= endDate);
+            } else if (analysisType === "monthly") {
+                const startMonth = document.getElementById("startMonthYear").value + "-01";
+                const endMonth = document.getElementById("endMonthYear").value + "-31";
+                filteredData = deliveryData.filter(item => item.date >= startMonth && item.date <= endMonth);
+            } else if (analysisType === "yearly") {
+                const startYear = document.getElementById("startYearOnly").value;
+                const endYear = document.getElementById("endYearOnly").value;
+                filteredData = deliveryData.filter(item => item.date.slice(0, 4) >= startYear && item.date.slice(0, 4) <= endYear);
+            }
+
+            if (filteredData.length === 0) {
+                alert("No data available for the selected range.");
+                return;
+            }
+
+            Object.values(charts).forEach(chart => chart.destroy());
+
+            if (chartType === 'histogram') {
+                const binCounts = new Array(24).fill(0);
+                const binLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
+
+                filteredData.forEach(item => {
+                    const hour = item.deliveryTime;
+                    if (hour >= 0 && hour < 24) {
+                        binCounts[hour]++;
+                    }
+                });
+
+                const ctx = document.getElementById("histogramChart").getContext('2d');
+                charts.histogramChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: binLabels,
+                        datasets: [{
+                            label: "Number of Deliveries",
+                            data: binCounts,
+                            backgroundColor: "#007bff",
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.9
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Deliveries'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Hour of Day'
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Distribution of Delivery Times'
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById("histogramChart").style.display = "block";
+                document.getElementById("pieChart").style.display = "none";
+            }
+
+            if (chartType === 'pie') {
+                const onTimeCount = filteredData.filter(item => item.onTime).length;
+                const notOnTimeCount = filteredData.filter(item => !item.onTime).length;
+
+                const ctx = document.getElementById("pieChart").getContext('2d');
+                charts.pieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['On Time', 'Not On Time'],
+                        datasets: [{
+                            data: [onTimeCount, notOnTimeCount],
+                            backgroundColor: ['#28a745', '#dc3545'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Delivery Timing Distribution'
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById("histogramChart").style.display = "none";
+                document.getElementById("pieChart").style.display = "block";
+            }
+        }
+
+        window.onload = () => {
+            loadSQLData();
+            updateInputFields();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Heat Maps</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .blur {
+            filter: blur(4px);
+            transition: filter 0.05s ease;
+        }
+        .container {
+            max-width: 100%;
+            margin: auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+        }
+        #search-container {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        #search-bar {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        #search-bar:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+        #suggestions {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            top: 45px;
+            z-index: 100;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #suggestions div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        #suggestions div:hover {
+            background-color: #f0f0f0;
+        }
+        canvas {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            max-height: 50vh;
+        }
+        #region-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 5;
+        }
+        #region-info div {
+            padding: 10px;
+            background-color: #e0e0e0;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 3px;
+            min-width: 100px;
+            flex-grow: 1;
+            max-width: 200px;
+        }
+        #region-info div:hover {
+            background-color: #d6d6d6;
+        }
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: left;
+            z-index: 2000;
+            min-width: 300px;
+        }
+        .message-box .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Plant Heat Maps</h1>
+        <div id="search-container">
+            <input type="text" id="search-bar" placeholder="Search for a plant...">
+            <div id="suggestions"></div>
+        </div>
+        <div id="region-info"></div>
+        <canvas id="heatmap"></canvas>
+    </div>
+
+    <script>
+        const labels = ["Region 1", "Region 2", "Region 3", "Region 4", "Region 5"];
+        const regions = {
+            "Region 1": {
+                name: "North Zone",
+                places: ["Delhi", "Lucknow", "Chandigarh", "Amritsar", "Jaipur", "Kanpur", "Varanasi", "Dehradun"]
+            },
+            "Region 2": {
+                name: "South Zone",
+                places: ["Chennai", "Bangalore", "Hyderabad", "Kochi", "Mysore", "Vijayawada", "Trivandrum", "Madurai"]
+            },
+            "Region 3": {
+                name: "East Zone",
+                places: ["Kolkata", "Bhubaneswar", "Guwahati", "Patna", "Ranchi", "Shillong", "Durgapur", "Siliguri"]
+            },
+            "Region 4": {
+                name: "West Zone",
+                places: ["Mumbai", "Pune", "Ahmedabad", "Surat", "Nagpur", "Goa", "Vadodara", "Udaipur"]
+            },
+            "Region 5": {
+                name: "Central Zone",
+                places: ["Bhopal", "Indore", "Raipur", "Gwalior", "Jabalpur", "Bilaspur", "Ujjain", "Rewa"]
+            }
+        };
+
+        function generateHeatmap(productName) {
+            console.log('Fetching data for:', productName); // Debug log
+
+            fetch(`/api/product-popularity?product=${encodeURIComponent(productName)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received data:', data); // Debug log
+
+                    const uniqueColors = [
+                        'rgba(255, 99, 132, 0.8)',   // Soft Red
+                        'rgba(54, 162, 235, 0.8)',   // Blue
+                        'rgba(255, 206, 86, 0.8)',   // Yellow
+                        'rgba(75, 192, 192, 0.8)',   // Teal
+                        'rgba(153, 102, 255, 0.8)'   // Purple
+                    ];
+
+                    if (window.heatmapChart) {
+                        window.heatmapChart.destroy();
+                    }
+
+                    // Find the maximum value for dynamic scaling
+                    const maxValue = Math.max(...data) || 50;
+                    const roundedMax = Math.ceil(maxValue / 10) * 10;
+
+                    window.heatmapChart = new Chart(heatmapCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: `Popularity for ${productName}`,
+                                data: data,
+                                backgroundColor: uniqueColors,
+                                borderColor: 'rgba(0, 0, 0, 0.1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: roundedMax,
+                                    ticks: {
+                                        stepSize: Math.ceil(roundedMax / 10)
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            },
+                            onClick: (event, elements) => {
+                                if (elements.length > 0) {
+                                    const regionIndex = elements[0].index;
+                                    const regionName = labels[regionIndex];
+                                    showMessageBox(regionName, regions[regionName]);
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching product popularity:', error);
+                    alert('Could not fetch product popularity. Please try again.');
+                });
+        }
+
+        function populateRegionInfo() {
+            regionInfo.innerHTML = '';
+            labels.forEach(label => {
+                const regionDiv = document.createElement('div');
+                regionDiv.textContent = label;
+                regionDiv.addEventListener('click', () => {
+                    showMessageBox(label, regions[label]);
+                });
+                regionInfo.appendChild(regionDiv);
+            });
+        }
+
+        function showSuggestions(input) {
+            fetch('/api/product-list')
+                .then(response => response.json())
+                .then(products => {
+                    const filteredProducts = products.filter(product =>
+                        product.toLowerCase().includes(input.toLowerCase())
+                    ).slice(0, 5);
+
+                    suggestions.innerHTML = '';
+
+                    if (input && filteredProducts.length) {
+                        filteredProducts.forEach(product => {
+                            const suggestionItem = document.createElement('div');
+                            suggestionItem.textContent = product;
+                            suggestionItem.addEventListener('click', () => {
+                                searchBar.value = product;
+                                suggestions.innerHTML = '';
+                                generateHeatmap(product);
+                            });
+                            suggestions.appendChild(suggestionItem);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching product list:', error);
+                });
+        }
+
+        const searchBar = document.getElementById('search-bar');
+        const suggestions = document.getElementById('suggestions');
+        const heatmapCanvas = document.getElementById('heatmap');
+        const regionInfo = document.getElementById('region-info');
+        let heatmapChart;
+
+        searchBar.addEventListener('input', (e) => {
+            const searchValue = e.target.value.trim();
+            showSuggestions(searchValue);
+        });
+
+        // Initialize with the first product and populate region info
+        fetch('/api/product-list')
+            .then(response => response.json())
+            .then(products => {
+                if (products && products.length > 0) {
+                    generateHeatmap(products[0]);
+                }
+            });
+        populateRegionInfo();
+    </script>
+</body>
+</html>

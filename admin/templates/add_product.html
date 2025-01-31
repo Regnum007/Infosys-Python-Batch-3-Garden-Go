@@ -1,12 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-</head>
+{% extends 'navbar.html' %}
+{% block head %}
+<title>Admin Add product</title>
+{% endblock %}
+
+{% block home %}
+<li class="nav-item">
+    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Home</a>
+</li>
+{% endblock %}
+{% block search %}
+<form class="d-flex me-3" action="{{ url_for('admint2.edit_product') }}" method="get">
+    <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
+    <button class="btn btn-light search-btn" type="submit"><i class="fas fa-search"></i></button>
+</form>
+{% endblock %}
+
+{% block part %}
+<span class="me-2" style="color: white;font-size: 17px; font-weight: 700;">
+    Welcome, {{ user.name if user else admin.name if admin else 'Admin' }}
+</span>
+<div class="dropdown">
+    <a href="#" style="color: white;" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-user fa-2x"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+    </ul>
+</div>
+{% endblock %}
+
 <body>
+    {% block body %}
     <div class="container my-5">
         <h1>Add Product</h1>
         <a href="{{ url_for('admint2.edit_product') }}" class="btn btn-primary btn-lg m-3">BACK TO ADMIN MODE</a>
@@ -58,7 +86,7 @@
             <button type="submit" class="btn btn-primary">Add Product</button>
         </form>
     </div>
-
+    {% endblock %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </body>

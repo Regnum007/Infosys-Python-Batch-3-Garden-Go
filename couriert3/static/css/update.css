@@ -1,0 +1,62 @@
+h1:hover {
+    background-color: #d8f3dc; /* Slightly darker green */
+    color: #1b4332; /* Deeper green text */
+    transition: all 0.3s ease-in-out;
+  }
+
+
+  body {
+    background-color: #f0f9f4; /* Light greenish background */
+  }
+
+  .container {
+    margin-top: 50px;
+  }
+
+  .form-label {
+    color: #3e8e41; /* Dark green label text */
+  }
+
+  .form-control {
+    border: 1px solid #a8d0a2; /* Light green border for input fields */
+    background-color: #f8f9f4; /* Soft greenish background for inputs */
+  }
+
+  .form-control:focus {
+    border-color: #6ccf6d; /* Light green when focused */
+    box-shadow: 0 0 0 0.2rem rgba(108, 207, 109, 0.25); /* Light green focus shadow */
+  }
+
+  .btn-success {
+    background-color: #5cb85c; /* Bootstrap success green */
+    border-color: #4cae4c;
+  }
+
+  .btn-success:hover {
+    background-color: #4cae4c;
+    border-color: #398439;
+  }
+
+  .mb-3 {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn {
+    font-weight: bold;
+  }
+
+  /* Light green for the entire form */
+  form {
+    background-color: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for form */
+    padding: 30px;
+  }
+  
+  .form-control::placeholder {
+    color: #6c757d; /* Placeholder text in grey */
+  }
+
+  .form-label {
+    font-weight: 600;
+  }

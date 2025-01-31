@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/update.css') }}">
+{% endblock %}
+{% block body %}
+
+<h1 class="container text-center p-3 my-4 rounded"
+  style="background-color: #eafaf1; color: #2d6a4f; border: 2px solid #b8dfc8; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  Update Todo
+</h1>
+
+<form action="/update/{{ todo.sno }}" method="POST">
+  <div class="mb-3">
+    <label for="orderid" class="form-label">Order id</label>
+    <input type="text" class="form-control" name="orderid" id="orderid" value="{{ todo.order_id }}">
+  </div>
+  <div class="mb-3">
+    <label for="courier_name" class="form-label">Courier Name</label>
+    <input type="text" class="form-control" name="courier_name" id="courier_name" value="{{ todo.courier_name }}">
+  </div>
+
+  <div class="mb-3">
+    <label for="status" class="form-label">Order Status</label>
+    <select id="status" class="form-control" name="status" required>
+      <option value="" disabled selected>Select Status</option>
+      <option value="Dispatched" {% if todo.status=="Dispatched" %}selected{% endif %}>Dispatched</option>
+      <option value="In Transit" {% if todo.status=="In Transit" %}selected{% endif %}>In Transit</option>
+      <option value="Out for Delivery" {% if todo.status=="Out for Delivery" %}selected{% endif %}>Out for Delivery
+      </option>
+      <option value="Delivered" {% if todo.status=="Delivered" %}selected{% endif %}>Delivered</option>
+      <option value="Failed Attempt" {% if todo.status=="Failed Attempt" %}selected{% endif %}>Failed Attempt</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">Update</button>
+</form>
+{% endblock %}

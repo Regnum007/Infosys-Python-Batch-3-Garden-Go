@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/static/css/report_issue.css">
+    <title>{% block title %}My App{% endblock %}</title>
+    {% block extra_css %}{% endblock %}
+    <style>
+        .navbar {
+            background: linear-gradient(to right, #5adb5a, #05994d); /* Light green to dark green gradient */
+        }
+        
+        .navbar .nav-links a {
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .navbar .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Highlight effect on hover */
+        }
+        .dropdown .dropdown-menu a {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar p-3 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center" style="background-color: #fff; border-radius: 8px; padding: 5px 10px;">
+            <img src="/static/images/logo.png" alt="Garden Go Logo" style="height: 50px;">
+        </div>
+        <ul class="nav-links d-flex list-unstyled mb-0 justify-content-center flex-grow-1">
+            {% if user %}
+                {% if user.role == 'Admin' %}
+                    <!-- Admin/Courier-specific navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a>
+                    </li>
+                    <li><a href="{{ url_for('couriert3.track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
+                    <li><a href="{{ url_for('couriert3.show_subscribers') }}"><i class="fas fa-users"></i> Subscribers</a></li>
+                    <li><a href="{{ url_for('couriert3.monitor_progress') }}"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
+                    <li><a href="{{ url_for('couriert3.report_issue') }}"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
+                    <li><a href="../bellicon.html"><i class="fas fa-bell notification-icon"></i>Notification</a></li>
+                 {% endif %}
+
+
+                    {% if user.role == 'Courier' %}
+                  
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.home') }}">Courier Dashboard</a>
+                    </li>
+                    <li><a href="{{ url_for('couriert3.track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
+                    <li><a href="{{ url_for('couriert3.show_subscribers') }}"><i class="fas fa-users"></i> Subscribers</a></li>
+                    <li><a href="{{ url_for('couriert3.monitor_progress') }}"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
+                    <li><a href="{{ url_for('couriert3.report_issue') }}"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
+                    <li><a href="../bellicon.html"><i class="fas fa-bell notification-icon"></i>Notification</a></li>
+                  
+                    {% endif %}
+            {% endif %}
+        </ul>
+        <div class="d-flex align-items-center">
+            {% if user %}
+           
+                <span class="me-3">Welcome, {{ user.role }}</span>
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-white" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user fa-2x"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href="{{ url_for('logint1.login') }}" class="btn btn-success text-white">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+
+
+
+    <div class="container mt-4">
+        {% block body %}{% endblock %}
+    </div>
+
+    <footer class="footer bg-dark text-white p-4">
+        <div class="footer-container row">
+            <div class="footer-section about col-md-4">
+                <h3 class="footer-title">Garden Go</h3>
+                <p>Your trusted partner for all garden and plant delivery needs. Fast, reliable, and eco-friendly delivery services specializing in plants, garden tools, and horticultural supplies.</p>
+            </div>
+            <div class="footer-section support col-md-2">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="{{ url_for('couriert3.helpcenter') }}" class="text-white"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                    <li><a href="#" class="text-white">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section legal col-md-2">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="{{ url_for('couriert3.privacypolicy') }}" class="text-white">Privacy Policy</a></li>
+                    <li><a href="{{ url_for('couriert3.termsofservice') }}" class="text-white">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section connect col-md-4">
+                <h4>Newsletter</h4>
+                <p>Subscribe for updates and exclusive offers!</p>
+                <div class="d-flex gap-3 mt-3">
+                    <button class="btn btn-success text-white">
+                        <a href="{{ url_for('couriert3.show_subscribers') }}" class="text-decoration-none text-white">
+                            <i class="fas fa-users"></i> Subscribers
+                        </a>
+                    </button>
+                    <button class="btn btn-success text-white">Join Now</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center mt-3">
+            <p>© 2024 Garden Go Courier. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/subscribers.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

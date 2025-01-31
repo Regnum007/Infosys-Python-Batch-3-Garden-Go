@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vmcss.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="content">
+    <h1>Privacy Policy</h1>
+    <p>Last updated: January 1, 2024</p>
+    <section>
+        <h2>Introduction</h2>
+        <p>Welcome to Garden Go. Your privacy is important to us...</p>
+    </section>
+    <!-- Add more sections as needed -->
+</main>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <p id="modal-text"></p>
+    </div>
+</div>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/vmjs.js') }}"></script>
+{% endblock %}

@@ -1,7 +1,19 @@
-from flask import Blueprint, request, redirect, url_for, render_template, flash
-from model import Product,User,db
-from utils import admin_required  
+from flask import Blueprint, request, redirect, url_for, render_template, flash, current_app
+from model import Product, User, db, IST
+from utils import admin_required
+from sqlalchemy import or_, desc
+from datetime import datetime, timedelta
+from flask_mail import Message
+import plotly.graph_objs as go
+import plotly.io as pio
+import sys
 import os
+
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if base_dir not in sys.path:
+    sys.path.append(base_dir)
+from user.logint1 import mail
+
 
 admint2 = Blueprint(
     "admint2", 
@@ -15,12 +27,69 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@admint2.route("/admin/home")
+@admin_required
+def admin_home():
+    return render_template("admin.html")
+
+@admint2.route("/admin/category")
+def filteradmin_category(category):
+    products = Product.query.filter_by(category_name=category).all()
+    return render_template("products.html", products=products)
+
 
 @admint2.route("/admin/edit")
 @admin_required
 def edit_product():
-    return render_template("admin_edit.html")
+    query = request.args.get("query", "").lower()
+    sort = request.args.get("sort", "default")
+    products = Product.query.all()
+    ordered_products = []
 
+    # Apply search filtering
+    filtered_products = [
+        product for product in products
+        if query in product.name.lower()
+        or query in product.category_name.lower()
+        or query in str(product.selling_price).lower()
+        or query in str(product.weight).lower()
+    ]
+    if sort != "default":
+        if query:
+            if sort == "price_asc":
+                filtered_products.sort(key=lambda p: p.selling_price)
+            elif sort == "price_desc":
+                filtered_products.sort(key=lambda p: p.selling_price, reverse=True)
+            elif sort == "weight_asc":
+                filtered_products.sort(key=lambda p: p.weight)
+            elif sort == "weight_desc":
+                filtered_products.sort(key=lambda p: p.weight, reverse=True)
+            elif sort == "name_asc":
+                filtered_products.sort(key=lambda p: p.name.lower())
+            elif sort == "name_desc":
+                filtered_products.sort(key=lambda p: p.name.lower(), reverse=True)
+        else:
+            # If no query, sort the original products list
+            if sort == "price_asc":
+                products.sort(key=lambda p: p.selling_price)
+            elif sort == "price_desc":
+                products.sort(key=lambda p: p.selling_price, reverse=True)
+            elif sort == "weight_asc":
+                products.sort(key=lambda p: p.weight)
+            elif sort == "weight_desc":
+                products.sort(key=lambda p: p.weight, reverse=True)
+            elif sort == "name_asc":
+                products.sort(key=lambda p: p.name.lower())
+            elif sort == "name_desc":
+                products.sort(key=lambda p: p.name.lower(), reverse=True)
+
+    return render_template(
+        "admin_edit.html",
+        products=filtered_products if query else products,
+        ordered_products=ordered_products,
+        sort=sort
+    )
+  
 
 @admint2.route('/admin/edit/modify', methods=['GET', 'POST'])
 @admin_required
@@ -146,3 +215,164 @@ def recovery_products():
         return redirect(url_for('admint2.recovery_products'))
 
     return render_template('recover.html', products=deleted_products)
+
+
+@admint2.route('/admin/manage-users', methods=['GET', 'POST'])
+@admin_required
+def manage_users():
+    if request.method == 'GET':
+        users = User.query.order_by(desc(User.is_active)).all()
+        search_query = request.args.get('search', '').lower()
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+
+        # Filter users based on the search query
+        if search_query:
+            filtered_users = db.session.query(User).filter(
+                or_(
+                    User.email.ilike("%"+search_query+"%"),  # Case-insensitive match for email
+                    User.phone_number.like("%"+search_query+"%")  # Case-sensitive match for mobile number
+                )
+            ).order_by(desc(User.is_active)).all()
+        else:
+            filtered_users = users
+        # Pagination logic
+        total_users = len(filtered_users)
+        total_pages = (total_users + per_page - 1) // per_page  # Ceiling division
+        start = (page - 1) * per_page
+        end = start + per_page
+        paginated_users = filtered_users[start:end]
+        return render_template('manage_users.html', users=users, paginated_users=paginated_users, current_page=page, total_pages=total_pages,search_query=search_query)
+
+
+@admint2.route('/admin/view-user/<int:user_id>', methods=['POST'])
+@admin_required
+def view_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('view_user.html', user=user)
+
+
+@admint2.route('/admin/deactivate/<int:user_id>', methods=['POST'])
+@admin_required
+def deactivate(user_id):
+    user = User.query.get_or_404(user_id)
+    user.is_active = False
+    db.session.commit()
+    flash(f' user ID {user_id}\'s account has been Deactivated.', 'success')
+    return redirect(url_for('admint2.manage_users'))
+@admint2.route('/admin/reactivation-requests', methods=['GET', 'POST'])
+@admin_required
+def reactivation_requests():
+    requests = User.query.filter_by(account_request=1).order_by(desc(User.last_login)).all()
+    return render_template('reactivation_approval.html', requests=requests)
+
+
+
+@admint2.route('/admin/approve-request/<int:user_id>', methods=['POST'])
+@admin_required
+def approve_request(user_id):
+    user = User.query.get_or_404(user_id)
+    user.account_request = 0
+    user.is_active = 1
+    db.session.commit()
+
+    # Send approval email
+    msg = Message(
+        'Reactivation request',
+        recipients=[user.email],
+        html=(
+            f'<h3>Hello {user.name},</h3>'
+            f'<p>Your reactivation request for the Garden Go Auto Courier Connect account has been approved.</p>'
+            f'<p>You can access the account <a href="{url_for("logint1.index", _external=True)}">Here</a></p>'
+        )
+    )
+    mail.send(msg)
+
+    flash(f'Reactivation request for user ID {user_id} has been approved.', 'success')
+    return redirect(url_for('admint2.reactivation_requests'))
+
+
+@admint2.route('/admin/reject-request/<int:user_id>', methods=['POST'])
+@admin_required
+def reject_request(user_id):
+    user = User.query.get_or_404(user_id)
+    user.account_request = 0
+    db.session.commit()
+
+    # Send rejection email
+    msg = Message(
+        'Reactivation request',
+        recipients=[user.email],
+        html=(
+            f'<h3>Hello {user.name},</h3>'
+            f'<p>Your reactivation request for the Garden Go Auto Courier Connect account has been rejected.</p>'
+            f'<p>You can make another request by visiting '
+            f'<a href="{url_for("logint1.reactivation", user_id=user.id, _external=True)}">Here</a>.</p>'
+        )
+    )
+    mail.send(msg)
+
+    flash(f'Reactivation request for user ID {user_id} has been rejected.', 'danger')
+    return redirect(url_for('admint2.reactivation_requests'))
+
+
+@admint2.route('/admin/admin_stats')
+def active_sessions():
+    session_model = current_app.session_interface.sql_session_model
+
+    # Query for active sessions
+    active_sessions_count = db.session.query(session_model).filter(
+        session_model.expiry > datetime.utcnow()
+    ).count()
+    total_user_count = User.query.count()
+    reactivation_count = User.query.filter_by(account_request=1).count()
+
+    return {
+        "active_sessions": active_sessions_count,
+        "total_users": total_user_count,
+        "reactivation_count": reactivation_count
+    }
+
+
+@admint2.route('/admin/user_plot')
+def generate_user_registration_plot():
+    now = datetime.now(IST)
+    months = []
+    for i in range(12):
+        first_day_of_month = (now - timedelta(days=1)).replace(day=1)
+        months.append(first_day_of_month)
+        now = first_day_of_month
+    months.reverse()
+
+
+    # Query the database for user counts
+    user_counts = []
+    for i in range(len(months) - 1):
+        count = User.query.filter(User.created_at >= months[i], User.created_at < months[i + 1]).count()
+        user_counts.append(count)
+    # Add current month's users
+    user_counts.append(User.query.filter(User.created_at >= months[-1]).count())
+    month_labels = [month.strftime("%b %Y") for month in months]
+    bar_chart = go.Bar(
+        x=month_labels,
+        y=user_counts,
+        marker=dict(color='skyblue'),
+        hoverinfo='x+y',  # Show both month and count on hover
+        text=user_counts,  # Text to display above bars
+        textposition='auto'
+    )
+    layout = go.Layout(
+        title='User Registrations Over the Past 12 Months',
+        xaxis=dict(title='Month', tickangle=-45),
+        yaxis=dict(title='Number of Users'),
+        bargap=0.2
+    )
+    fig = go.Figure(data=[bar_chart], layout=layout)
+    config = {
+        'displayModeBar': False,  # Disable the mode bar
+    }
+    plot_html = pio.to_html(fig, full_html=False, config=config)
+    return {"plot_html": plot_html}
+
+
+

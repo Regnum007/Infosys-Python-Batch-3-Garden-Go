@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales and Profit Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #e0f7fa, #e8f5e9);
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            background-color: #004d40;
+            color: white;
+            padding: 20px 0;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0;
+        }
+
+        form#analysisForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        label {
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .top-inputs {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-boxes {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            flex: 1;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background: #004d40;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #029078;
+        }
+
+        .charts-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 90%;
+            height: 400px !important;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 768px) {
+            input,
+            select {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .top-inputs {
+                flex-direction: column;
+            }
+
+            .input-boxes {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sales Dashboard</h1>
+
+    <form id="analysisForm">
+        <div class="top-inputs">
+            <div class="input-row">
+                <div>
+                    <label for="analysisType">Select Analysis Type:</label>
+                    <select id="analysisType" onchange="updateInputFields()">
+                        <option value="daily" selected>Day-to-Day</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div>
+                    <label>Start:</label>
+                    <input type="date" id="startDate">
+                    <input type="month" id="startMonthYear" style="display: none;">
+                    <input type="number" id="startYearOnly" placeholder="YYYY" style="display: none;">
+                </div>
+
+                <div>
+                    <label>End:</label>
+                    <input type="date" id="endDate">
+                    <input type="month" id="endMonthYear" style="display: none;">
+                    <input type="number" id="endYearOnly" placeholder="YYYY" style="display: none;">
+                </div>
+            </div>
+
+            <!-- Add Monthly Inputs -->
+            <div class="input-row" id="monthlyInputs" style="display: none;">
+                <div>
+                    <label for="startYearMonth">Start Year-Month:</label>
+                    <input type="month" id="startYearMonth">
+                </div>
+                <div>
+                    <label for="endYearMonth">End Year-Month:</label>
+                    <input type="month" id="endYearMonth">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-buttons">
+            <button id="graphButton" type="button" onclick="generateGraphs('graph')">Sales Graph</button>
+            <button id="pieChartButton" type="button" onclick="generateGraphs('pie')">Profit Pie Chart</button>
+        </div>
+    </form>
+
+    <div class="charts-container">
+        <canvas id="lineChart"></canvas>
+        <canvas id="pieChart" style="display: none;"></canvas>
+        <div style="text-align: center; margin-top: 10px; color: #666; font-size: 0.9em;">
+            Note: Sales values and Revenue values are displayed in their actual amounts and Profit values are multiplied by 10 for better visualization.
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let salesData = [];
+
+        async function loadSQLData() {
+            try {
+                const response = await fetch('/api/sales-data');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                salesData = data.map(row => ({
+                    date: row.date,
+                    sales: row.sales || 0,
+                    profit: row.profit || 0,
+                    revenue: row.revenue || 0
+                })).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                if (salesData.length > 0) {
+                    const firstDate = salesData[0].date;
+                    const lastDate = salesData[salesData.length - 1].date;
+
+                    document.getElementById("startDate").value = firstDate;
+                    document.getElementById("endDate").value = lastDate;
+                }
+            } catch (error) {
+                console.error('Error loading SQL data:', error);
+                alert('Failed to load data from the server: ' + error.message);
+            }
+        }
+
+        let charts = {};
+
+        function generateGraphs(chartType) {
+            const analysisType = document.getElementById("analysisType").value;
+            let filteredData = [];
+
+            if (analysisType === "daily") {
+                const startDateInput = document.getElementById("startDate").value;
+                const endDateInput = document.getElementById("endDate").value;
+
+                if (!startDateInput || !endDateInput) {
+                    alert("Please select both start and end dates.");
+                    return;
+                }
+
+                const startDate = new Date(startDateInput + "T00:00:00");
+                const endDate = new Date(endDateInput + "T23:59:59");
+
+                filteredData = salesData.filter(item => {
+                    const itemDate = new Date(item.date + "T00:00:00");
+                    return itemDate >= startDate && itemDate <= endDate;
+                });
+            } else if (analysisType === "monthly") {
+                const startYearMonth = document.getElementById("startYearMonth").value;
+                const endYearMonth = document.getElementById("endYearMonth").value;
+
+                if (!startYearMonth || !endYearMonth) {
+                    alert("Please provide both start and end month.");
+                    return;
+                }
+
+                const startDate = new Date(startYearMonth + "-01");
+                const endDate = new Date(endYearMonth + "-01");
+
+                filteredData = salesData.filter(item => {
+                    const itemDate = new Date(item.date);
+                    return itemDate >= startDate && itemDate <= endDate;
+                });
+
+                // Group data by month and year
+                const monthlyData = {};
+                filteredData.forEach(item => {
+                    const date = new Date(item.date);
+                    const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}`;
+                    if (!monthlyData[monthYear]) {
+                        monthlyData[monthYear] = { sales: 0, revenue: 0, profit: 0 };
+                    }
+                    monthlyData[monthYear].sales += item.sales;
+                    monthlyData[monthYear].revenue += item.revenue;
+                    monthlyData[monthYear].profit += item.profit;
+                });
+
+                filteredData = Object.entries(monthlyData).map(([monthYear, values]) => ({
+                    date: monthYear,
+                    ...values,
+                }));
+            } else if (analysisType === "yearly") {
+                // Group data by year
+                const yearlyData = {};
+                salesData.forEach(item => {
+                    const date = new Date(item.date);
+                    const year = date.getFullYear();
+                    if (!yearlyData[year]) {
+                        yearlyData[year] = { sales: 0, revenue: 0, profit: 0 };
+                    }
+                    yearlyData[year].sales += item.sales;
+                    yearlyData[year].revenue += item.revenue;
+                    yearlyData[year].profit += item.profit;
+                });
+
+                filteredData = Object.entries(yearlyData).map(([year, values]) => ({
+                    date: year,
+                    ...values,
+                }));
+            }
+
+            if (!filteredData.length) {
+                alert("No data available for the selected range.");
+                return;
+            }
+
+            const labels = filteredData.map(item => item.date);
+            const sales = filteredData.map(item => item.sales);
+            const profits = filteredData.map(item => item.profit);
+            const revenues = filteredData.map(item => item.revenue);
+            const losses = profits.map(value => Math.abs(Math.min(value, 0)));
+
+            const totalProfit = profits.reduce((acc, val) => acc + Math.max(val, 0), 0);
+            const totalLoss = profits.reduce((acc, val) => acc + Math.abs(Math.min(val, 0)), 0);
+
+            Object.values(charts).forEach(chart => chart.destroy());
+
+            if (chartType === 'graph') {
+                charts.lineChart = new Chart(document.getElementById("lineChart"), {
+                    type: "line",
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: "Sales",
+                            data: sales,
+                            borderColor: "#007bff",
+                            fill: false
+                        },
+                        {
+                            label: "Profit (×10)",
+                            data: profits.map(val => val * 10),
+                            borderColor: "#28a745",
+                            fill: false
+                        },
+                        {
+                            label: "Revenue",
+                            data: revenues,
+                            borderColor: "#ffc107",
+                            fill: false,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let value = context.raw;
+                                        const label = context.dataset.label.split(' ')[0];
+
+                                        // Convert back to original values for tooltip
+                                        if (label === 'Sales') value = value;
+                                        if (label === 'Profit') value = value / 10;
+
+                                        return `${label}: ${value.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                document.getElementById("lineChart").style.display = "block";
+                document.getElementById("pieChart").style.display = "none";
+            }
+
+            if (chartType === 'pie') {
+                if (charts.pieChart) {
+                    charts.pieChart.destroy();
+                }
+
+                charts.pieChart = new Chart(document.getElementById("pieChart"), {
+                    type: "pie",
+                    data: {
+                        labels: totalProfit === 0 && totalLoss === 0 ? ["No Data Available"] : ["Total Profit", "Total Loss"],
+                        datasets: [{
+                            data: totalProfit === 0 && totalLoss === 0 ? [1] : [totalProfit, totalLoss],
+                            backgroundColor: totalProfit === 0 && totalLoss === 0 ? ["#f0ad4e"] : ["#28a745", "#dc3545"]
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+
+                document.getElementById("pieChart").style.display = "block";
+                document.getElementById("lineChart").style.display = "none";
+            }
+        }
+
+        function updateInputFields() {
+            const analysisType = document.getElementById("analysisType").value;
+
+            document.getElementById("startDate").style.display = analysisType === "daily" ? "block" : "none";
+            document.getElementById("endDate").style.display = analysisType === "daily" ? "block" : "none";
+
+            document.getElementById("startMonthYear").style.display = analysisType === "monthly" ? "none" : "none";
+            document.getElementById("endMonthYear").style.display = analysisType === "monthly" ? "none" : "none";
+
+            document.getElementById("startYearOnly").style.display = analysisType === "yearly" ? "block" : "none";
+            document.getElementById("endYearOnly").style.display = analysisType === "yearly" ? "block" : "none";
+
+            // Show monthly inputs if monthly is selected
+            document.getElementById("monthlyInputs").style.display = analysisType === "monthly" ? "flex" : "none";
+        }
+
+        loadSQLData();
+    </script>
+</body>
+</html>

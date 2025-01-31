@@ -38,11 +38,12 @@
         <div class="form-group">
             <label for="role">Role</label>
             <select id="role" name="role" onchange="toggleSecretKeyField()" required>
-                <option value="customer" selected>Customer</option>
-                <option value="courier">Courier</option>
+                <option value="" disabled selected>Select your role</option>
+                <option value="customer">Customer</option>
                 <option value="admin">Admin</option>
             </select>
         </div>
+        
         <div class="form-group">
             <label for="password">Password</label>
             <div>

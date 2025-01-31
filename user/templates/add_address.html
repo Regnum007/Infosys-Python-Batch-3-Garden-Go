@@ -1,78 +1,203 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
-    <title>User Address Form</title>
-    <style>
+{% extends 'navbar.html' %}
+{% block head %}
+<title>{% if address %}Update{% else %}Add{% endif %} Address</title>
+{% endblock %}
+{% block home %}
+{% if user.role == 'Admin' %}
+<!-- Admin-specific navigation -->
+<li class="nav-item">
+    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a>
+</li>
+{% elif user.role == 'Customer' %}
+    <!-- User-specific navigation -->
+    <li class="nav-item">
+        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('customert2.product_list') }}">Products</a>
+    </li>
+    {% elif user and user.role == 'Courier' %}
+    <!-- User-specific navigation -->
+    <li class="nav-item">
+        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.home') }}">Courie Dashboardr</a>
+    </li>   
+    {% endif %}
+{% endblock %}
+{% block category %}
+{% endblock %}
+{% block search %}
+            
+            {% endblock %}
+{%  block sign %}
+            
+           
 
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            width: 18.75rem;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background: #ffffff;
-        }
-        .form-container h2 {
-            text-align: center;
-        }
+    <a href="{{ url_for('customert2.set_location') }}" class="me-4"> </a>
+                   
+    <span class="me-2" style="color:white;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;font-size: large;">Welcome, {{ user.name if user else 'Guest' }}</span>
 
-    </style>
-</head>
-<body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category,message in messages%}
-            <div class="{{ category }}">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    <div class="dropdown">
+      <a
+        href="#"
+        class="d-flex align-items-center text-decoration-none dropdown-toggle"
+        id="profileDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+      <i class="fa fa-user fa-2x" style="color:white;"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{{url_for('logint1.profile')}}">Update Profile</a></li>
+        <li><a class="dropdown-item" href="{{url_for('logint1.change_password')}}">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{url_for('logint1.address')}}">Address</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{url_for('logint1.logout')}}">Logout</a></li>
+      </ul>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+{% block body %}
+<style>
+    .form-container {
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .alert {
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert-error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .alert .closebtn {
+        margin-left: 15px;
+        color: #aaa;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    .alert .closebtn:hover {
+        color: black;
+    }
+</style>
+
+<div class="container">
     <div class="form-container">
-        <h2>Address Form</h2>
-        <form action="/add-address" method="POST">
+        <button type="button" class="btn btn-custom back-btn" onclick="history.back()">
+            <i class="fas fa-arrow-left me-2"></i>Back
+        </button>
+        <h2>{% if address %}Update{% else %}Add{% endif %} Address</h2>
+        {% if address %}
+        <form action="{{ url_for('logint1.update_address', address_id=address.address_id ) }}" method="POST">
+        {% else %}
+        <form action="{{ url_for('logint1.add_address') }}" method="POST">
+        {% endif %}
 
             <!-- Street Address Field -->
             <div class="form-group">
                 <label for="street_address">Street Address:</label>
-                <input type="text" id="street_address" name="street_address" required>
+                <input type="text" id="street_address" name="street_address" value="{{ address.street_address if address else '' }}" required>
             </div>
 
             <!-- Locality Field -->
             <div class="form-group">
                 <label for="locality">Locality:</label>
-                <input type="text" id="locality" name="locality" required>
+                <input type="text" id="locality" name="locality" value="{{ address.locality if address else '' }}" required>
             </div>
 
             <!-- City Field -->
             <div class="form-group">
                 <label for="city">City:</label>
-                <input type="text" id="city" name="city" required>
+                <input type="text" id="city" name="city" value="{{ address.city if address else '' }}" required>
             </div>
 
             <!-- State Field -->
             <div class="form-group">
                 <label for="state">State:</label>
-                <input type="text" id="state" name="state">
+                <input type="text" id="state" name="state" value="{{ address.state if address else '' }}">
             </div>
 
             <!-- Postal Code Field -->
             <div class="form-group">
                 <label for="postal_code">Postal Code:</label>
-                <input type="text" id="postal_code" name="postal_code" required>
+                <input type="text" id="postal_code" name="postal_code" value="{{ address.postal_code if address else '' }}" required>
             </div>
 
             <!-- Submit Button -->
             <div class="form-group">
-                <input type="submit" class="submit-btn" value="Submit">
+                <input type="submit" class="submit-btn" value="{% if address %}Update{% else %}Add{% endif %} Address">
             </div>
         </form>
     </div>
-</body>
-<script src="{{url_for('static',filename='js/login.js')}}"></script>
+</div>
+    <script src="{{url_for('static',filename='js/login.js')}}"></script>
+   
+{% endblock %}
 </html>
 

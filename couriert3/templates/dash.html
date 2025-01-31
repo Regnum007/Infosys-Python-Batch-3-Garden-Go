@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dash.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index2.css') }}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+<h1 class="container text-center p-3 my-4 rounded" 
+    style="background-color: #eafaf1; color: #2d6a4f; border: 2px solid #b8dfc8; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+  Courier Dashboard
+</h1>
+
+<div class="container my-4">
+  <!-- Overview Section -->
+  <div class="row mb-4 justify-content-center">
+    <!-- Total Orders -->
+    <div class="col-md-3">
+      <div class="card text-white bg-green-dark text-center status-card">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-shopping-cart"></i> Total Orders
+          </h5>
+          <p class="card-text display-4">{{ status_counts['total_orders'] }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Overview -->
+    <div class="col-md-6">
+      <div class="card text-dark bg-green-light text-center status-card">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fas fa-chart-line"></i> Orders Overview
+          </h5>
+          <div class="row">
+            <div class="col-md-4">
+              <p class="card-text">
+                <i class="fas fa-calendar-day"></i>
+                <strong> Today:</strong> {{ status_counts['today_orders'] }}
+              </p>
+            </div>
+            <div class="col-md-4">
+              <p class="card-text">
+                <i class="fas fa-calendar-alt"></i>
+                <strong> This Month:</strong> {{ status_counts['month_orders'] }}
+              </p>
+            </div>
+            <div class="col-md-4">
+              <p class="card-text">
+                <i class="fas fa-calendar-check"></i>
+                <strong> This Year:</strong> {{ status_counts['year_orders'] }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Section -->
+    <div class="row g-3 text-center">
+      <div class="col-md-2">
+        <div class="card text-white bg-green-primary status-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="fas fa-truck-loading"></i> Dispatched
+            </h5>
+            <p class="card-text">{{ status_counts['Dispatched'] }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-white bg-green-secondary status-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="fas fa-shipping-fast"></i> In Transit
+            </h5>
+            <p class="card-text">{{ status_counts['In Transit'] }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-white bg-green-warning status-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="fas fa-box"></i> Out for Delivery
+            </h5>
+            <p class="card-text">{{ status_counts['Out for Delivery'] }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-white bg-green-success status-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="fas fa-check-circle"></i> Delivered
+            </h5>
+            <p class="card-text">{{ status_counts['Delivered'] }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="card text-white bg-green-danger status-card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="fas fa-times-circle"></i> Failed Attempt
+            </h5>
+            <p class="card-text">{{ status_counts['Failed Attempt'] }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form action="/courier" method="POST" class="container p-4 rounded" style="background-color: #eafaf1;">
+  <h3 class="text-center mb-4" style="color: #2d6a4f;">Order Details Form</h3>
+  
+  <div class="mb-3">
+    <label for="orderid" class="form-label" style="color: #1b4332;">Order ID</label>
+    <select class="form-control" name="orderid" id="orderid" required>
+      <option value="" disabled selected>Select Order ID</option>
+      {% for order in pending_orders %}
+        <option value="{{ order.order_id }}">{{ order.order_id }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="courier_name" class="form-label" style="color: #1b4332;">Courier Name</label>
+    <input type="text" class="form-control" name="courier_name" id="courier_name" 
+      placeholder="Enter courier name" value="{{ courier_name }}">
+  </div>
+  <div class="mb-3">
+    <label for="status" class="form-label" style="color: #1b4332;">Order Status</label>
+    <select id="status" class="form-control" name="status" required>
+      <option value="Pending" selected>Pending</option>
+      <option value="Dispatched">Dispatched</option>
+      <option value="In Transit">In Transit</option>
+      <option value="Out for Delivery">Out for Delivery</option>
+      <option value="Delivered">Delivered</option>
+      <option value="Failed Attempt">Failed Attempt</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-success w-100">Submit</button>
+</form>
+
+<h1 class="text-center my-4">Orders List</h1>
+
+<div class="container mt-4">
+  <div class="container mb-4">
+    <form action="/" method="GET" class="row g-3 align-items-center">
+      <div class="col-md-4">
+        <input
+          type="text"
+          name="search_query"
+          class="form-control"
+          placeholder="Search by Order ID or Courier Name"
+          value="{{ search_query }}">
+      </div>
+      <div class="col-md-3">
+        <select name="filter_status" class="form-control">
+          <option value="" disabled {% if not filter_status %}selected{% endif %}>Filter by Status</option>
+          <option value="Dispatched" {% if filter_status == 'Dispatched' %}selected{% endif %}>Dispatched</option>
+          <option value="In Transit" {% if filter_status == 'In Transit' %}selected{% endif %}>In Transit</option>
+          <option value="Out for Delivery" {% if filter_status == 'Out for Delivery' %}selected{% endif %}>Out for Delivery</option>
+          <option value="Delivered" {% if filter_status == 'Delivered' %}selected{% endif %}>Delivered</option>
+          <option value="Failed Attempt" {% if filter_status == 'Failed Attempt' %}selected{% endif %}>Failed Attempt</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Apply</button>
+      </div>
+      <div class="col-md-3">
+        <a href="/" class="btn btn-secondary w-100">Return to All Orders</a>
+      </div>
+    </form>
+  </div>
+
+  {% if allTodo %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Order ID</th>
+        <th>Courier Name</th>
+        <th>Status</th>
+        <th>Date Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in allTodo %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ order.order_id }}</td>
+        <td>{{ order.courier_name }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        <td>
+          <a href="/delete/{{ order.sno }}" class="btn btn-danger btn-sm">Delete</a>
+          <a href="/update/{{ order.sno }}" class="btn btn-warning btn-sm">Update</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-center">No orders to show. Add one above!</p>
+  {% endif %}
+</div>
+
+<div class="text-center my-4">
+  <a href="/track" class="btn btn-info">Track Your Order</a>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/track.js') }}"></script>
+{% endblock %}

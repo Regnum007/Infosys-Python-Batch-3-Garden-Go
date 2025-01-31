@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/helpcenter.css') }}">
+{% endblock %}
+{% block body %}
+
+<main class="content">
+    <h1>Help Center</h1>
+    <p>How can we assist you today? Choose a category below to get started.</p>
+    <div class="help-sections">
+        <div class="help-card">
+            <i class="fas fa-shipping-fast"></i>
+            <h3>Order Tracking</h3>
+            <p>Learn how to track your orders in real-time.</p>
+            <button class="details-btn"
+                data-content="Order tracking helps you stay updated on your package location. You can use the tracking ID for real-time updates.">Learn
+                More</button>
+        </div>
+        <div class="help-card">
+            <i class="fas fa-exchange-alt"></i>
+            <h3>Returns and Refunds</h3>
+            <p>Understand our return and refund policies.</p>
+            <button class="details-btn"
+                data-content="Our return policy allows you to request refunds or replacements within 30 days. Learn about eligibility and steps.">Learn
+                More</button>
+        </div>
+        <div class="help-card">
+            <i class="fas fa-user-shield"></i>
+            <h3>Account Security</h3>
+            <p>Protect your account with best practices.</p>
+            <button class="details-btn"
+                data-content="Keep your account secure by using strong passwords and enabling two-factor authentication.">Learn
+                More</button>
+        </div>
+    </div>
+</main>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <p id="modal-text"></p>
+    </div>
+</div>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/helpcenter.js') }}"></script>
+{% endblock %}

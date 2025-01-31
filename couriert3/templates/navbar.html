@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garden Go Auto Courier Navbar</title>
+    <link rel="stylesheet" href=".../static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #08e447;
+            padding: 10px 20px;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .navbar:hover {
+            background-color: #06c337;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, background-color 0.3s;
+            padding: 8px 10px;
+            border-radius: 5px;
+        }
+
+        .nav-links li a:hover {
+            background-color: #056f24;
+            transform: scale(1.1);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .search-bar input {
+            padding: 5px 10px;
+            border: 2px solid white;
+            border-radius: 5px;
+            outline: none;
+            color: #333;
+        }
+
+        .search-bar input::placeholder {
+            color: #aaa;
+        }
+
+        .search-bar button {
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #08e447;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #056f24;
+            color: white;
+        }
+
+        .navbar-icons {
+            display: flex;
+            gap: 20px;
+            font-size: 18px;
+        }
+
+        .navbar-icons i {
+            cursor: pointer;
+            transition: transform 0.3s, color 0.3s;
+        }
+
+        .navbar-icons i:hover {
+            color: #ffcc00;
+            transform: rotate(15deg);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* footer css */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .footer {
+            position: relative;
+            background: linear-gradient(135deg, #2a2a2a, #444);
+            color: white;
+            padding: 60px 20px;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('wave.svg') repeat-x;
+            animation: wave 10s infinite linear;
+            z-index: 1;
+        }
+
+        @keyframes wave {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            z-index: 2;
+            position: relative;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+            margin: 10px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin: 10px 0;
+        }
+
+        .footer-section ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #08e447;
+        }
+
+        .social-icons li {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .social-icons li a {
+            color: white;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons li a:hover {
+            transform: scale(1.2);
+        }
+
+        .app-links img {
+            width: 120px;
+            margin: 10px 5px 0 0;
+            transition: transform 0.3s ease;
+        }
+
+        .app-links img:hover {
+            transform: scale(1.1);
+        }
+
+        .newsletter form {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .newsletter input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            flex-grow: 1;
+        }
+
+        .newsletter button {
+            padding: 10px 15px;
+            background-color: #08e447;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            background-color: #06c337;
+        }
+
+        .footer-bottom {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #555;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .payment-icons i {
+            font-size: 24px;
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .payment-icons i:hover {
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">Garden Go Auto Courier</div>
+        <ul class="nav-links">
+            <li><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="#track-order"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
+            <li><a href="#view-order"><i class="fas fa-box"></i> View Order</a></li>
+            <li><a href="#update-status"><i class="fas fa-sync-alt"></i> Update Status</a></li>
+            <li><a href="#monitor-progress"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
+            <li><a href="#report-issue"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
+        </ul>
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="navbar-icons">
+            <i class="fas fa-bell notification-icon"></i>
+            <i class="fas fa-user user-icon"></i>
+        </div>
+    </nav>
+
+
+    <!-- Add footer -->
+
+
+    <footer class="footer">
+        <div class="wave"></div>
+        <div class="footer-container">
+            <div class="footer-section about">
+                <h3 class="footer-title">Garden Go</h3>
+                <p>Your trusted partner for all garden and plant delivery needs. Fast, reliable, and eco-friendly
+                    delivery services specializing in plants, garden tools, and horticultural supplies.</p>
+            </div>
+            <div class="footer-section support">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="help-center.html">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section legal">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="terms-of-service.html">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section company">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-section connect">
+                <h4>Connect</h4>
+                <ul class="social-icons">
+                    <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                </ul>
+                <div class="app-links">
+                    <a href="#"><img src="google-play.png" alt="Google Play"></a>
+                    <a href="#"><img src="app-store.png" alt="App Store"></a>
+                </div>
+            </div>
+            <div class="footer-section newsletter">
+                <h4>Newsletter</h4>
+                <p>Subscribe for updates and exclusive offers!</p>
+                <form>
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Garden Go Courier. All rights reserved.</p>
+
+        </div>
+    </footer>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const backToTopButton = document.getElementById("back-to-top");
+
+            // Show/hide the back-to-top button
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.style.display = "block";
+                } else {
+                    backToTopButton.style.display = "none";
+                }
+            });
+
+            // Smooth scroll to top
+            backToTopButton.addEventListener("click", () => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+            // Highlight active link
+            const currentPath = window.location.pathname.split("/").pop();
+            const navLinks = document.querySelectorAll(".nav-links a");
+
+            navLinks.forEach(link => {
+                if (link.getAttribute("href") === currentPath) {
+                    link.classList.add("active");
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

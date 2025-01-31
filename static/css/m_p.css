@@ -1,0 +1,107 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f9f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #4CAF50;
+}
+
+.container {
+    width: 90%;
+    margin: 20px auto;
+}
+
+/* Tiles for Statistics */
+.tile-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tile {
+    background-color: white;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 22%;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tile h3 {
+    margin: 0;
+    color: #4CAF50;
+}
+
+.tile p {
+    font-size: 30px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* Icons Style */
+.tile .icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* Chart Styles */
+.chart-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Recent Delivered Orders Table */
+.recent-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.recent-table th, .recent-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.recent-table th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.recent-table td {
+    background-color: white;
+}
+
+.recent-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Buttons and Links */
+a {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+a:hover {
+    background-color: #45a049;
+}
+.status-delivered {
+    color: #ffffff;
+    background-color: #28a745;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}

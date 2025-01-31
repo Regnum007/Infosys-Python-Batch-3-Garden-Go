@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<!-- Report Issue Section 1 -->
+<div class="container" id="report-issue">
+    <h2>Report Issue</h2>
+    <form action="/Report_issue.html" method="POST">
+        <label for="order_id">Order ID:</label>
+        <input type="text" name="order_id" required>
+
+        <label for="description">Description:</label>
+        <input type="text" name="description" required>
+
+
+
+        <button type="submit">Submit Issue</button>
+    </form>
+</div>
+
+<!-- View Issues Section 2 -->
+<div class="container" id="view-issues">
+    <h2>Reported Issues</h2>
+    <table id="issueTable">
+        <tr>
+            <th>Issue ID</th>
+            <th>Order ID</th>
+            <th>Description</th>
+
+            <th>Reported Date</th>
+            <th>Action</th>
+        </tr>
+        {% for issue in issues %}
+        <tr>
+            <td>{{ "%04d"|format(issue.issue_id) }}</td>
+            <td>{{ issue.order_id }}</td>
+            <td>{{ issue.description }}</td>
+
+            <td>{{ issue.reported_dte.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <form action="/remove_issue/{{ issue.issue_id }}" method="POST" style="display:inline;">
+                    <button type="submit"
+                        onclick="return confirm('Are you sure you want to remove this issue?');">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+<!-- Modal for Order Details -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
+        <p><strong>Customer:</strong> <span id="modalCustomerName"></span></p>
+        <p><strong>Item:</strong> <span id="modalItemName"></span></p>
+        <p><strong>Cost:</strong> $<span id="modalCost"></span></p>
+        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        <div id="failedReason" class="hidden">
+            <p><strong>Reason:</strong> <span id="modalReason"></span></p>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,90 @@
+
+body {
+    background-color: #d4edda; /* Light green background */
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #155724; /* Dark green text */
+    animation: fadeIn 1s ease-in-out;
+}
+
+#subscribe-form .form-control {
+    border-radius: 20px 0 0 20px;
+    border: 2px solid #28a745;
+}
+
+#subscribe-form .btn {
+    border-radius: 0 20px 20px 0;
+    background-color: #28a745;
+    border: 2px solid #28a745;
+    color: white;
+}
+
+#subscribe-form .btn:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+table {
+    animation: fadeInUp 1s ease-in-out;
+}
+
+thead th {
+    background-color: #28a745;
+    color: white;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #e9ecef;
+}
+
+.img-fluid {
+    border: 5px solid #28a745;
+    border-radius: 10px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.flash-messages {
+    margin: 20px;
+    text-align: center;
+}
+
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}

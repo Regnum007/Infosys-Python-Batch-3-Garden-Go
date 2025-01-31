@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/track.css') }}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f8fb;
+        color: #333;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 10px;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+        transform: scale(1.05);
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+        transform: scale(1.05);
+    }
+
+    h1 {
+        font-size: 32px;
+        font-weight: 600;
+        color: #4CAF50;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        transition: border 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #4CAF50;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    .step {
+        text-align: center;
+        padding: 15px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .step i {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .step.completed {
+        background-color: #e0f7e3;
+        color: #4CAF50;
+    }
+
+    .step:not(.completed) {
+        background-color: #f3f3f3;
+        color: #aaa;
+    }
+
+    .progress-bar {
+        background-color: #4CAF50 !important;
+        transition: width 0.4s ease-in-out;
+    }
+
+    .progress {
+        height: 25px;
+        border-radius: 10px;
+    }
+
+    .alert-info {
+        background-color: #f9f9f9;
+        border-color: #ddd;
+        color: #555;
+    }
+
+    .back-button {
+    position: absolute;
+    top: 80px;
+    left: 240px;
+    z-index: 999;
+}
+.btn-danger {
+    background-color: #57c81b; 
+    border-color: #043a0b; 
+    color: white; 
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #06891e; 
+    border-color: #bd2130; 
+    transform: scale(1.05); 
+}
+
+.btn-danger:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(6, 90, 3, 0.5); 
+}
+
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-success">Track Your Order</h1>
+
+    <form id="track-form" action="{{ url_for('couriert3.track_order') }}" method="POST">
+        <div class="mb-4">
+            <label class="form-label font-weight-bold text-success">Enter Order ID</label>
+            <input type="text" class="form-control" id="manual-order-id" name="manual_order_id" placeholder="Enter Order ID" required>
+        </div>
+
+        <button class="btn btn-success btn-lg w-100" type="submit">Track</button>
+    </form>
+
+    {% if order %}
+    <div id="order-info" class="card mt-5 shadow-lg border-success">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-3 text-success">Order Details</h4>
+
+            <p><strong>Courier Name:</strong> {{ order.courier_name }}</p>
+
+            {% if order.status == 'Failed Attempt' %}
+                <p><strong>Status:</strong> In Transit (Failed Delivery Attempt)</p>
+            {% else %}
+                <p><strong>Status:</strong> <span id="status">{{ order.status }}</span></p>
+            {% endif %}
+
+            <div class="order-status mt-4">
+                <div class="step {% if order.status == 'Dispatched' or order.status == 'In Transit' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
+                    <i class="fas fa-truck {% if order.status == 'Dispatched' or order.status == 'In Transit' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}text-success{% else %}text-muted{% endif %}"></i>
+                    <p>Dispatched</p>
+                </div>
+                <div class="step {% if order.status == 'In Transit' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
+                    <i class="fas fa-spinner fa-spin {% if order.status == 'In Transit' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}text-success{% else %}text-muted{% endif %}"></i>
+                    <p>In Transit</p>
+                </div>
+                <div class="step {% if order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
+                    <i class="fas fa-box {% if order.status == 'Out for Delivery' or order.status == 'Delivered' %}text-success{% else %}text-muted{% endif %}"></i>
+                    <p>Out for Delivery</p>
+                </div>
+                <div class="step {% if order.status == 'Delivered' %}completed{% endif %}">
+                    <i class="fas fa-check-circle {% if order.status == 'Delivered' %}text-success{% else %}text-muted{% endif %}"></i>
+                    <p>Delivered</p>
+                </div>
+            </div>
+
+            <div class="progress mt-4" style="height: 25px; border-radius: 10px;">
+                <div 
+                    class="progress-bar bg-custom-green" 
+                    role="progressbar" 
+                    style="width: {% if order.status == 'Failed Attempt' %}50{% else %}{{ order.status_percentage }}{% endif %}%; border-radius: 8px;" 
+                    aria-valuenow="{{ order.status_percentage }}" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100">
+                    {% if order.status == 'Failed Attempt' %}
+                        In Transit (Failed Attempt)
+                    {% else %}
+                        {{ order.status }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4 text-center">
+        <strong>Info!</strong> Order not found. Please check the Order ID.
+    </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div class="back-button text-center mt-5">
+        <button class="btn btn-danger" onclick="window.history.back()">Back</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/track.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // No need for dropdown option anymore, only handle manual input
+        const manualInput = document.getElementById('manual-order-id');
+        manualInput.required = true;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+  }
+  
+  .container {
+    margin-top: 20px;
+  }
+  
+  .status-card {
+    height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-text {
+    font-size: 1.1rem;
+  }
+  
+  .display-4 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .row.g-3 > .col-md-2 {
+    flex-grow: 1;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+
+
+/* Custom Green Shades */
+.bg-green-dark {
+    background: linear-gradient(135deg, #004d00, #006400);
+  }
+  
+  .bg-green-light {
+    background: linear-gradient(135deg, #7cfc00, #32cd32);
+  }
+  
+  .bg-green-primary {
+    background: linear-gradient(135deg, #228b22, #2e8b57);
+  }
+  
+  .bg-green-secondary {
+    background: linear-gradient(135deg, #6b8e23, #556b2f);
+  }
+  
+  .bg-green-warning {
+    background: linear-gradient(135deg, #9acd32, #808000);
+  }
+  
+  .bg-green-success {
+    background: linear-gradient(135deg, #008000, #006400);
+  }
+  
+  .bg-green-danger {
+    background: linear-gradient(135deg, #228b22, #3cb371);
+  }
+  
+  /* Hover Effects */
+  .status-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  
+
+  .btn-success:hover {
+    background-color: #1b4332;
+  }
+  h1:hover {
+    background-color: #d8f3dc; /* Slightly darker green */
+    color: #1b4332; /* Deeper green text */
+    transition: all 0.3s ease-in-out;
+  }
+  
+
+
+  .table {
+    border: 1px solid #a8d0a2; /* Light green border */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  thead {
+    background-color: #d4edda; /* Light green background for the header */
+    color: #3e8e41; /* Dark green text */
+  }
+
+  tbody tr {
+    background-color: #ffffff; /* White background for rows */
+  }
+
+  tbody tr:hover {
+    background-color: #c8e6c9; /* Light green hover effect */
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+  }
+  
+  .status-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 1rem;
+    font-weight: bold;
+  }
+
+  .status-dispatched {
+    background-color: #d1e7dd;
+    color: #0f5132;
+  }
+
+  .status-in-transit {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .status-out-for-delivery {
+    background-color: #d4edda;
+    color: #3e8e41;
+  }
+
+  .status-delivered {
+    background-color: #c3e6cb;
+    color: #155724;
+  }
+
+  .status-failed-attempt {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
