@@ -306,7 +306,7 @@ def update(sno):
         except Exception as e:
             db.session.rollback() 
             flash(f"Error: {e}", "danger")
-        return redirect("/") 
+        return redirect("/courier") 
     
    
     return render_template('update.html', todo=todo, user=user)

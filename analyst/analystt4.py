@@ -6,6 +6,7 @@ import logging
 from logging.config import fileConfig
 
 from flask import current_app
+from utils import admin_required
 
 from alembic import context
 from flask_cors import CORS  # Import CORS from flask_cors
@@ -22,6 +23,7 @@ admin_credentials = {
 }
 
 @analystt4.route('/analyticsindex')
+@admin_required
 def analyticsindex():
     try:
         return render_template('analyst.html')
@@ -29,6 +31,7 @@ def analyticsindex():
         return f"An error occurred while loading the index: {e}", 500
 
 @analystt4.route('/loginananalytics', methods=['GET', 'POST'])
+@admin_required
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -42,12 +45,14 @@ def login():
     return render_template('login.html')  # Render login page again on failure
 
 @analystt4.route('/logout')
+@admin_required
 def logout():
     session.pop('logged_in', None)
     flash('You have been logged out.', 'info')
     return redirect(url_for('index'))
 
 @analystt4.route('/sales_graph')
+@admin_required
 def sales_graph():
     try:
         # Fetch sales data from the database
@@ -58,6 +63,7 @@ def sales_graph():
 
 
 @analystt4.route('/delivery_dashboard')
+@admin_required
 def delivery_dashboard():
     try:
         return render_template('delivery_dashboard.html')
@@ -65,6 +71,7 @@ def delivery_dashboard():
         return f"An error occurred while loading the delivery dashboard: {e}", 500
 
 @analystt4.route('/api/delivery-data')
+@admin_required
 def get_delivery_data():
     try:
         # Just get all couriers first
@@ -87,6 +94,7 @@ def get_delivery_data():
         return jsonify({'error': str(e)}), 500
 
 @analystt4.route('/product_heat_maps')
+@admin_required
 def product_heat_maps():
     try:
         return render_template('heat_maps_updated.html')
@@ -95,6 +103,7 @@ def product_heat_maps():
 
 
 @analystt4.route('/api/product-list')
+@admin_required
 def get_product_list():
     try:
         # Get list of all product names
@@ -105,6 +114,7 @@ def get_product_list():
 
 
 @analystt4.route('/api/product-popularity')
+@admin_required
 def get_product_popularity():
     try:
         product_name = request.args.get('product')
@@ -196,6 +206,7 @@ def get_product_popularity():
 
 
 @analystt4.route('/home')
+@admin_required
 def home():
     try:
         return render_template('home.html')
@@ -203,6 +214,7 @@ def home():
         return f"An error occurred while loading the home page: {e}", 500
 
 @analystt4.route('/api/sales-data', methods=['GET'])
+@admin_required
 def get_sales_data():
     try:
         # Retrieve the query parameters for filtering by month and year
@@ -259,6 +271,7 @@ def get_sales_data():
 
 
 @analystt4.route('/api/generate-graph', methods=['POST'])
+@admin_required
 def generate_graphs():
     data = request.json
     analysis_type = data.get('analysisType')
@@ -297,6 +310,7 @@ def generate_graphs():
 
 
 @analystt4.route('/verifyproduct')
+@admin_required
 def verify_product_data():
     # Check total number of products
     total_products = Product.query.count()
