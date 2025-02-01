@@ -231,10 +231,10 @@ def verify_product_data():
         print(f"Product: {product.name}, Quantity: {detail.quantity}")
         
 REGIONS = {
-    "North": range(110000, 280000),
-    "South": range(500000, 650000),
-    "East": range(700000, 800000),
-    "West": range(360000, 450000),
+    "North": range(110000, 300000),
+    "South": range(500001, 700000),
+    "East": range(700001, 999999),
+    "West": range(400001, 500000),
     "Central": range(300000, 400000)
 }
 
