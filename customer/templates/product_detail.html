@@ -42,22 +42,7 @@
     <a href="{{ url_for('customert2.product_list') }}" class="btn btn-secondary mb-4" style="margin-bottom: 20px; background-color: rgb(40, 193, 40); color: white;">Back to products</a>
     <div class="text-end ">
         
-        <!-- Subscribe Form -->
-        <form action="{{ url_for('customert2.subscribe') }}" method="POST" style="display: inline;">
-            <button type="submit" class="btn btn-secondary" name="subscribe_action" value="subscribe">
-                <i class="fas fa-bell" style="color: red;"></i>
-                <span style="font-size: 14px;">Subscribe</span>
-            </button>
-        </form>
-   
-        <!-- Unsubscribe Form -->
-        <form action="{{ url_for('customert2.unsubscribe') }}" method="POST" style="display: inline;">
-            <button type="submit" class="btn btn-secondary" name="subscribe_action" value="unsubscribe">
-                <i class="fas fa-bell" style="color: gold;"></i>
-                <span style="font-size: 14px;">Unsubscribe</span>
-            </button>
-        </form>
-  
+      
 </div>
 
 

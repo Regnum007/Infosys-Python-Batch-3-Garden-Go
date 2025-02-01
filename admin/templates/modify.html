@@ -62,7 +62,8 @@
                         <p class="card-text">Category: {{ product.category_name }}</p>
                         <p class="card-text">Description: {{ product.description }}</p>
                         <p class="card-text">Weight: {{ product.weight }}</p>
-                        <p class="card-text">Price: {{ product.selling_price }}</p>
+                        <p class="card-text">Cost Price: {{ product.cost_price }}</p>
+                        <p class="card-text">Selling Price: {{ product.selling_price }}</p>
                         
                         <form method="POST" action="{{ url_for('admint2.modify_products') }}" enctype="multipart/form-data">
                             <input type="hidden" name="product_name" value="{{ product.name }}"> <!-- Hidden input for product name -->
@@ -84,7 +85,11 @@
                                 <input type="text" class="form-control" id="weight" name="weight" placeholder="Enter new weight" value="{{ product.weight }}">
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
+                                <label for="price" class="form-label">Cost Price</label>
+                                <input type="text" class="form-control" id="cost_price" name="cost_price" placeholder="Enter cost price" value="{{ product.cost_price }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label"> Selling Price</label>
                                 <input type="text" class="form-control" id="price" name="price" placeholder="Enter new price" value="{{ product.selling_price }}">
                             </div>
                             <div class="mb-3">

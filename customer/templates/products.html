@@ -31,8 +31,6 @@
 {% endblock %}
 
 {% block sign %}
-<a href="{{ url_for('couriert3.track_order') }}" class="btn btn-primary me-4" style="color: white; padding: 2px; margin: 8px;"><i class="fas fa-shipping-fast text-white"></i>
-    Track Order</a></li>
 <a href="{{ url_for('customert2.view_cart') }}"  class="btn btn-primary me-4">
     <i class="fa fa-shopping-cart"></i> Cart
 </a>
@@ -69,33 +67,65 @@
 </style>
 
 <div class="container my-5">
-    <!-- Sort Button -->
-    <div class="text-end mb-3">
-        <button class="btn-sort" data-bs-toggle="modal" data-bs-target="#sortModal">
-            <i class="fas fa-filter"></i> Sort Products
-        </button>
+    <!-- Buttons (Sort on left, Subscribe on right) -->
+    <div class="d-flex justify-content-between mb-3">
+        <!-- Sort Button on Left -->
+        <div>
+            <button class="btn-sort" data-bs-toggle="modal" data-bs-target="#sortModal">
+                <i class="fas fa-filter"></i> Sort Products
+            </button>
+        </div>
+
+        <!-- Subscribe Button on Right -->
+        <div>
+            <form action="{{ url_for('customert2.subscribe') }}" method="post" style="display: inline;">
+                <button 
+                    type="submit" 
+                    class="btn {% if subscribed %}btn-unsubscribe{% else %}btn-subscribe{% endif %}">
+                    {% if subscribed %}
+                        <i class="fas fa-bell-slash"></i>
+                        Unsubscribe
+                    {% else %}
+                        <i class="fas fa-bell"></i>
+                        Subscribe
+                    {% endif %}
+                </button>
+            </form>
+        </div>
     </div>
+
+    <style>
+        /* General button styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Subscribe button styles */
+        .btn-subscribe {
+            background-color: #4caf50;
+        }
+
+        .btn-subscribe:hover {
+            background-color: #45a049;
+        }
+
+        /* Unsubscribe button styles */
+        .btn-unsubscribe {
+            background-color: #f44336;
+        }
+
+        .btn-unsubscribe:hover {
+            background-color: #e53935;
+        }
+    </style>
   
-    <div class="text-end mb-3">
-        
-            <!-- Subscribe Form -->
-            <form action="{{ url_for('customert2.subscribe') }}" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-danger" name="subscribe_action" value="subscribe">
-                    <i class="fas fa-bell" style="color: white;"></i>
-                    <span style="font-size: 14px;">Subscribe</span>
-                </button>
-            </form>
-       
-            <!-- Unsubscribe Form -->
-            <form action="{{ url_for('customert2.unsubscribe') }}" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-secondary" name="subscribe_action" value="unsubscribe">
-                    <i class="fas fa-bell" style="color: gold;"></i>
-                    <span style="font-size: 14px;">Unsubscribe</span>
-                </button>
-            </form>
-      
-    </div>
-    
     <!-- Sort Modal -->
     <div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -127,7 +157,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Product List -->
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for product in products %}
@@ -191,10 +221,11 @@
         {% endfor %}
     </div>
 </div>
+
 <script>
     function redirectToPage() {
     window.location.href = "{{ url_for('couriert3.show_subscribers') }}";
 }
-
 </script>
+
 {% endblock %}

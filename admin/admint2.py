@@ -111,6 +111,7 @@ def modify_products():
             selected_product.category_name = request.form.get('category_name', selected_product.category_name)
             selected_product.description = request.form.get('description', selected_product.description)
             selected_product.weight = request.form.get('weight', selected_product.weight)
+            selected_product.selling_price = request.form.get('cost_price', selected_product.cost_price)
             selected_product.selling_price = request.form.get('selling_price', selected_product.selling_price)
             
             image_url = request.form.get('image_url')
@@ -133,6 +134,7 @@ def add_product():
         name = request.form['name']
         description = request.form['description']
         category_name = request.form['category_name']
+        cost_price = float(request.form['cost_price'])
         selling_price = float(request.form['selling_price'])
         weight = request.form['weight']
         stock_quantity = request.form['stock_quantity']
@@ -155,6 +157,7 @@ def add_product():
             name=name,
             description=description,
             category_name=category_name,
+            cost_price=cost_price,
             selling_price=selling_price,
             image_url=image_path,
             weight=weight,

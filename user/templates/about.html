@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Go Garden</title>
     <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}" />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -13,22 +14,128 @@
       referrerpolicy="no-referrer"
     />
     <link rel="shortcut icon" href="{{url_for('static',filename='images/img.ico')}}" type="image/x-icon" />
-  </head>
-  <body>
-    <header class="header">
-      <section class="flex">
-        <a href="#" class="logo"><img src="{{url_for('static',filename='images/logo.png')}}" alt="" /></a>
 
-        <nav class="navbar">
-          <a href="javascript:history.back()" class="btn btn-secondary mb-4" style="background-color: rgb(40, 193, 40); color: white;">Back</a>
- 
-          <a href="#about">about</a>
-          <a href="{{ url_for('logint1.login') }}">Products</a> 
-          <a href="#contact">Contact</a>
-        </nav>
-        <div id="menu-btn" class="fas fa-bars"></div>
-      </section>
-      <!--used to group together related elements-->
+    <style>
+        /* Resetting default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            background: #fff;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Flex container */
+        .flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+        }
+
+        .navbar li {
+            list-style: none;
+        }
+
+        .navbar a {
+            font-size: 18px;
+            font-weight: 500;
+            padding: 8px 12px;
+            transition: 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: green;
+        }
+
+        /* Logo */
+        .logo img {
+            height: 50px;
+        }
+
+        /* Menu Button (Mobile) */
+        #menu-btn {
+            font-size: 24px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                background: white;
+                width: 100%;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            .navbar.active {
+                display: flex;
+            }
+
+            #menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <section class="flex">
+            <a class="logo">
+                <img src="{{url_for('static',filename='images/logo.png')}}" alt="Logo" />
+            </a>
+
+            <nav class="navbar">
+                <ul>
+                    {% if user and user.role == 'Admin' %}
+                        <li><a href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a></li>
+                    {% elif user and user.role == 'Customer' %}
+                        <li><a href="{{ url_for('customert2.product_list') }}">Products</a></li>
+                    {% elif user and user.role == 'Courier' %}
+                        <li><a href="{{ url_for('couriert3.home') }}">Courier</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('logint1.login') }}">Login</a></li>
+                    {% endif %}
+                    <li><a href="#about">About</a></li>
+
+                    <li><a href="#facility">Products</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div id="menu-btn" class="fas fa-bars"></div>
+        </section>
     </header>
 
     <div class="home-bg">
@@ -65,7 +172,7 @@
       </div>
     </section>
 
-    <section class="facility">
+    <section class="facility" id="facility">
       <div class="heading">
         <!-- <img
           src="images/heading-img.png"
@@ -74,7 +181,7 @@
         /> -->
         <h3 id="Products">Our Products</h3>
 
-        <p>
+        <p style="font-size: 16px;">
           We offer a wide range of gardening tools ,seeds,fertilizers,and
           eco-friendly plant transport solutions tailored for your needs
         </p>

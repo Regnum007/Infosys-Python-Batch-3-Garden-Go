@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash,jsonify
-from model import Product, User, db, Order,OrderDetail,Cart,Address,Sub
+from model import Product, User, db, Order,OrderDetail,Cart,Address,Sub,Sales
 from datetime import datetime
 import re  
 import uuid
@@ -138,73 +138,40 @@ def set_location():
 
     return redirect(request.referrer)  
 
-@customert2.route('/unsubscribe', methods=['POST'])
-def unsubscribe():
-   
-    if 'user_id' not in session:
-        return redirect(url_for('logint1.login'))
-
-    
-    user = User.query.get(session['user_id'])
-    if not user or not user.email:
-        flash("No email associated with your account!", "danger")
-        return redirect(url_for('couriert3.show_subscribers'))
-
-    email = user.email  
-
-    try:
-      
-        existing_subscriber = Sub.query.filter_by(email=email).first()
-
-        if not existing_subscriber:
-            flash("You are not currently subscribed.", "info")
-            return redirect(url_for('couriert3.show_subscribers'))
-
-       
-        db.session.delete(existing_subscriber)
-        db.session.commit()
-
-        flash("Unsubscribed successfully!", "success")
-        return redirect(url_for('couriert3.show_subscribers'))
-
-    except Exception as e:
-        flash("An error occurred while unsubscribing.", "danger")
-        return redirect(url_for('couriert3.show_subscribers'))
-
-
 @customert2.route('/subscribe', methods=['POST'])
 def subscribe():
-   
     if 'user_id' not in session:
         return redirect(url_for('logint1.login'))
 
-    
     user = User.query.get(session['user_id'])
     if not user or not user.email:
         flash("No email associated with your account!", "danger")
-        return redirect(url_for('couriert3.show_subscribers'))
+        return redirect(url_for('customert2.product_list'))
 
-    email = user.email  
+    email = user.email
 
     try:
-    
         existing_subscriber = Sub.query.filter_by(email=email).first()
-
         if existing_subscriber:
-            flash("You are already subscribed!", "info")
-            return redirect(url_for('couriert3.show_subscribers'))
+            # Unsubscribe logic
+            db.session.delete(existing_subscriber)
+            db.session.commit()
+            flash("Unsubscribed successfully!", "success")
+            subscribed = False
+        else:
+            # Subscribe logic
+            new_subscriber = Sub(email=email)
+            db.session.add(new_subscriber)
+            db.session.commit()
+            flash("Subscribed successfully!", "success")
+            subscribed = True
 
-        
-        new_subscriber = Sub(email=email)
-        db.session.add(new_subscriber)
-        db.session.commit()
-
-        flash("Subscribed successfully!", "success")
-        return redirect(url_for('couriert3.show_subscribers'))
+        # Pass the subscription status to the template
+        return redirect(url_for('customert2.product_list', subscribed=subscribed))
 
     except Exception as e:
-        flash("An error occurred while subscribing.", "danger")
-        return redirect(url_for('couriert3.show_subscribers'))
+        flash("An error occurred while updating your subscription.", "danger")
+        return redirect(url_for('customert2.product_list'))
 
 
 @customert2.route("/categorycustomer/<category>")
@@ -466,44 +433,58 @@ def decrement_quantity(product_id):
 def order_confirmation_cart():
     user = None
     order = Order.query.filter_by(user_id=session.get('user_id')).order_by(Order.created_at.desc()).first()
-    
+
     if not order:
         return redirect(url_for('customert2.product_list'))
-    
+
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
         user_id = user.user_id
-    
+
     order_details = OrderDetail.query.filter_by(order_id=order.order_id).all()
-    
-    ordered_products = [
-        {
-            'product': Product.query.get(detail.product_id),
+
+    ordered_products = []
+    for detail in order_details:
+        product = Product.query.get(detail.product_id)
+        sub_total = detail.sub_Total
+        
+        ordered_products.append({
+            'product': product,
             'quantity': detail.quantity,
-            'sub_total': detail.sub_Total
-        }
-        for detail in order_details
-    ]
-    
+            'sub_total': sub_total
+        })
+        
+        # Insert into Sales table
+        revenue = sub_total  # Assuming revenue = total price of sold units
+        cost_price = product.cost_price if hasattr(product, 'cost_price') else 0
+        profit = revenue - (cost_price * detail.quantity)  
+
+        new_sale = Sales(
+            product_id=product.product_id,
+            units_sold=detail.quantity,
+            revenue=revenue,
+            profit=profit,
+            sales_date=datetime.utcnow(),
+        )
+        db.session.add(new_sale)
+
     # Calculate total price and weight
     total_price = sum(item['sub_total'] for item in ordered_products)
-    total_weight = sum(
-        Product.query.get(detail.product_id).weight * detail.quantity
-        for detail in order_details
-    )
-    
+    total_weight = sum(item['product'].weight * item['quantity'] for item in ordered_products)
+
     shipping_cost = order.shipping_cost  
     shipping_cost_from_request = request.args.get('shippingCost')  
-    
+
     if shipping_cost_from_request:
-        
-        shipping_cost = re.sub(r'[^0-9.]', '', shipping_cost_from_request)  
-        shipping_cost = float(shipping_cost) 
-    
+        shipping_cost = re.sub(r'[^0-9.]', '', shipping_cost_from_request)
+        shipping_cost = float(shipping_cost)
+
     grand_total = total_price + shipping_cost
-    
-    
+
     confirmed_address = Address.query.filter_by(user_id=user_id).order_by(Address.created_at.desc()).first()
+
+    # Commit the sales data to the database
+    db.session.commit()
 
     return render_template(
         'order_confirmation.html',
@@ -517,6 +498,7 @@ def order_confirmation_cart():
         total_weight=total_weight,
         confirmed_address=confirmed_address  
     )
+
 
 # Order Detail
 @customert2.route("/order/<int:order_id>")
@@ -534,7 +516,6 @@ def order_detail(order_id):
         })
     
     return render_template("order_detail.html", order=order, products_in_order=products_in_order)
-
 # Order History
 @customert2.route('/order_history')
 def order_history():

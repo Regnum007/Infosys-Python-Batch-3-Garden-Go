@@ -22,6 +22,8 @@ admin_credentials = {
     "password": "password123"  # Replace with a secure password
 }
 
+
+
 @analystt4.route('/analyticsindex')
 @admin_required
 def analyticsindex():
@@ -93,116 +95,7 @@ def get_delivery_data():
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@analystt4.route('/product_heat_maps')
-@admin_required
-def product_heat_maps():
-    try:
-        return render_template('heat_maps_updated.html')
-    except Exception as e:
-        return f"An error occurred while loading the product heat maps: {e}", 500
 
-
-@analystt4.route('/api/product-list')
-@admin_required
-def get_product_list():
-    try:
-        # Get list of all product names
-        products = Product.query.with_entities(Product.name).all()
-        return jsonify([product[0] for product in products])
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@analystt4.route('/api/product-popularity')
-@admin_required
-def get_product_popularity():
-    try:
-        product_name = request.args.get('product')
-        print(f"Received request for product: {product_name}")
-
-        if not product_name:
-            return jsonify({"error": "Product name is required"}), 400
-
-        # Get the product first to ensure it exists
-        product = Product.query.filter_by(name=product_name).first()
-        if not product:
-            print(f"Product not found: {product_name}")
-            return jsonify({"error": f"Product not found: {product_name}"}), 404
-
-        print(f"Found product with ID: {product.product_id}")
-
-        # Define regions with their states and cities
-        region_mapping = {
-            "Region 1": {
-                "states": ["Delhi", "Uttar Pradesh", "Punjab", "Haryana", "Rajasthan"],
-                "cities": ["Delhi", "Lucknow", "Chandigarh", "Amritsar", "Jaipur", "Kanpur", "Varanasi", "Dehradun"]
-            },
-            "Region 2": {
-                "states": ["Tamil Nadu", "Karnataka", "Andhra Pradesh", "Telangana", "Kerala"],
-                "cities": ["Chennai", "Bangalore", "Hyderabad", "Kochi", "Mysore", "Vijayawada", "Trivandrum", "Madurai"]
-            },
-            "Region 3": {
-                "states": ["West Bengal", "Odisha", "Bihar", "Jharkhand", "Assam"],
-                "cities": ["Kolkata", "Bhubaneswar", "Guwahati", "Patna", "Ranchi", "Shillong", "Durgapur", "Siliguri"]
-            },
-            "Region 4": {
-                "states": ["Maharashtra", "Gujarat", "Goa"],
-                "cities": ["Mumbai", "Pune", "Ahmedabad", "Surat", "Nagpur", "Goa", "Vadodara", "Udaipur"]
-            },
-            "Region 5": {
-                "states": ["Madhya Pradesh", "Chhattisgarh"],
-                "cities": ["Bhopal", "Indore", "Raipur", "Gwalior", "Jabalpur", "Bilaspur", "Ujjain", "Rewa"]
-            }
-        }
-
-        popularity_data = []
-
-        # Print debug information about data availability
-        print(f"Database counts:")
-        print(f"Users: {User.query.count()}")
-        print(f"Addresses: {Address.query.count()}")
-        print(f"Orders: {Order.query.count()}")
-        print(f"Order Details: {OrderDetail.query.count()}")
-
-        for region_number in range(1, 6):
-            region_key = f"Region {region_number}"
-            region_states = region_mapping[region_key]["states"]
-            region_cities = region_mapping[region_key]["cities"]
-
-            try:
-                # Query to get total quantity of the product sold in this region
-                region_popularity = (
-                    db.session.query(func.coalesce(func.sum(OrderDetail.quantity), 0))
-                    .join(Order, OrderDetail.order_id == Order.order_id)
-                    .join(User, Order.user_id == User.user_id)
-                    .join(Address, User.user_id == Address.user_id)
-                    .filter(
-                        OrderDetail.product_id == product.product_id,
-                        db.or_(
-                            Address.state.in_(region_states),
-                            Address.city.in_(region_cities)
-                        )
-                    )
-                ).scalar() or 0
-
-                print(f"Popularity for {region_key}: {region_popularity}")
-                popularity_data.append(float(region_popularity))
-
-            except Exception as e:
-                print(f"Error processing region {region_key}: {e}")
-                popularity_data.append(0.0)
-
-        print(f"Final popularity data: {popularity_data}")
-        return jsonify(popularity_data)
-
-    except Exception as e:
-        print(f"Error in product popularity query: {e}")
-        import traceback
-        error_details = {
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
-        return jsonify(error_details), 500
 
 
 @analystt4.route('/home')
@@ -336,6 +229,72 @@ def verify_product_data():
     for detail in order_details:
         product = Product.query.get(detail.product_id)
         print(f"Product: {product.name}, Quantity: {detail.quantity}")
+        
+REGIONS = {
+    "North": range(110000, 280000),
+    "South": range(500000, 650000),
+    "East": range(700000, 800000),
+    "West": range(360000, 450000),
+    "Central": range(300000, 400000)
+}
 
+def get_region(postal_code):
+    for region, pincodes in REGIONS.items():
+        if int(postal_code) in pincodes:
+            return region
+    return "Unknown"
+
+@analystt4.route('/regional_popular_products')
+def regional_popular_products():
+    region_products = {region: [] for region in REGIONS.keys()}
+
+    # Get user regions
+    user_addresses = db.session.query(User.user_id, Address.postal_code).join(Address).all()
+    user_regions = {user_id: get_region(postal_code) for user_id, postal_code in user_addresses}
+
+    # Fetch product sales and categorize into regions
+    product_sales = (
+        db.session.query(Order.user_id, OrderDetail.product_id, func.sum(OrderDetail.quantity).label('total_sold'))
+        .join(OrderDetail, Order.order_id == OrderDetail.order_id)
+        .group_by(OrderDetail.product_id, Order.user_id)
+        .all()
+    )
+
+    region_sales = {region: {} for region in REGIONS.keys()}
+
+    for user_id, product_id, total_sold in product_sales:
+        region = user_regions.get(user_id, "Unknown")
+        if region in region_sales:
+            if product_id in region_sales[region]:
+                region_sales[region][product_id] += total_sold
+            else:
+                region_sales[region][product_id] = total_sold
+
+    # Get product details for the top 5 products per region
+    for region, sales in region_sales.items():
+        sorted_products = sorted(sales.items(), key=lambda x: x[1], reverse=True)[:5]  # Top 5
+        product_ids = [product_id for product_id, _ in sorted_products]
+
+        # Fetch product details
+        products = db.session.query(
+            Product.product_id, 
+            Product.name, 
+            Product.image_url, 
+            Product.selling_price
+        ).filter(Product.product_id.in_(product_ids)).all()
+
+        # Convert to dictionary format required for the template
+        region_products[region] = [
+            {
+                "product_id": p.product_id,
+                "name": p.name,
+                "image_url": p.image_url,
+                "selling_price": p.selling_price,
+                "order_count": sales.get(p.product_id, 0)  # Add order count for chart
+            }
+            for p in products
+        ]
+
+    return render_template('regional_popular_products.html', region_products=region_products)
 
 

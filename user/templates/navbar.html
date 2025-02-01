@@ -215,10 +215,23 @@
                 {% endblock %}
             </ul>
             {% block search %}
-            <form class="d-flex me-3" action="{{ url_for('customert2.product_list') }}" method="get">
-                <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
-                <button class="btn btn-light search-btn" type="submit"><i class="fas fa-search"></i></button>
+            <form class="d-flex align-items-center me-3" action="{{ url_for('customert2.product_list') }}" method="get" style="max-width: 400px; width: 100%;">
+                <input 
+                    class="form-control search-bar me-2" 
+                    type="search" 
+                    name="query" 
+                    placeholder="Search for products..." 
+                    style="border-radius: 20px; padding: 10px; border: 2px solid #37bd49,#001000; background-color: #e7f0e9; color: rgb(25, 178, 25); outline: none; transition: box-shadow 0.3s;"
+                >
+                <button 
+                    class="btn btn-primary search-btn" 
+                    type="submit" 
+                    style="border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background-color: #f6fbf7;"
+                >
+                    <i class="fas fa-search" style="color: rgb(23, 197, 23);"></i> <!-- Search icon color set to white -->
+                </button>
             </form>
+            
             {% endblock %}
             {% block user %} {% endblock %}
             {%  block sign %}

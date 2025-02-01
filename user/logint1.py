@@ -51,7 +51,15 @@ def indexproduct(id):
 
 @logint1.route("/about")
 def about():
-    return render_template('about.html')
+    user=None
+    
+      
+
+    
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+    return render_template('about.html',user=user)
 
 
 @logint1.route('/address')

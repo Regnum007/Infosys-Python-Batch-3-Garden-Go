@@ -3,9 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
     <title>Customer</title>
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+   
+    <style>
+        
+        .navbar-custom {
+            background: linear-gradient(90deg, #5adb5a, #05994d);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            background-color: white; /* White background */
+            padding: 5px; /* Padding around the logo */
+            border-radius: 15px; /* Rounded corners for smooth effect */
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+        .nav-link {
+            color: white !important;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #d4f4e0 !important;
+        }
+        .navbar-toggler-icon {
+            background-color: white;
+        }
+        .search-bar {
+            border-radius: 20px;
+            border: 1px solid white;
+            padding-left: 10px;
+        }
+        .search-bar::placeholder {
+            color:#86d68b;
+            font-size: 14px;
+        }
+        .search-btn {
+            border-radius: 20px;
+        }
+
+        
+    </style>
+
+   
+<nav class="navbar navbar-expand-lg navbar-custom py-2">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="{{url_for('static', filename='images/logo.png')}}" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+               
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('customert2.product_list') }}">Products</a>
+                    </li>
+                 
+            
+                <li class="nav-item">
+                    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('logint1.about') }}">About</a>
+                </li>
+           
+            </ul>
+            
+            <form class="d-flex align-items-center me-3" action="{{ url_for('customert2.product_list') }}" method="get" style="max-width: 400px; width: 100%;">
+                <input 
+                    class="form-control search-bar me-2" 
+                    type="search" 
+                    name="query" 
+                    placeholder="Search for products..." 
+                    style="border-radius: 20px; padding: 10px; border: 2px solid #37bd49,#001000; background-color: #e7f0e9; color: rgb(25, 178, 25); outline: none; transition: box-shadow 0.3s;"
+                >
+                <button 
+                    class="btn btn-primary search-btn" 
+                    type="submit" 
+                    style="border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background-color: #f6fbf7;"
+                >
+                    <i class="fas fa-search" style="color: rgb(23, 197, 23);"></i> <!-- Search icon color set to white -->
+                </button>
+            </form>
+            <a href="{{ url_for('couriert3.track_order') }}" class="btn btn-primary me-4" style="color: white; padding: 2px; margin: 8px;"><i class="fas fa-shipping-fast text-white"></i>
+                Track Order</a></li>
+            <span class="me-2 mx-3" style="color:white; font-size: large;">
+                Welcome, {{ user.name if user else 'Guest' }}
+            </span>
+            {% if user %}
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color:white; font-size: large;">
+                    <i class="fa fa-user fa-2x" style="color:white;"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+                </ul>
+            </div>
+            {% endif %}
+         
+        </div>
+    </div>
+</nav>
     <style>
         /* Popup Overlay Styles */
         .popup-overlay {
