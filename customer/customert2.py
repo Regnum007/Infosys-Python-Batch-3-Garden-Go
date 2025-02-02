@@ -28,6 +28,8 @@ def product_list():
     if 'user_id' in session:
         user = User.query.get(session['user_id'])
         user_id = user.user_id
+        if user and user.email:
+            subscribed = Sub.query.filter_by(email=user.email).first() is not None
     
         # Fetch the most recent order for the user
         recent_order = Order.query.filter_by(user_id=user_id).order_by(Order.created_at.desc()).first()
