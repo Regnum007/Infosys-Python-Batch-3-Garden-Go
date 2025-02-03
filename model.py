@@ -103,6 +103,8 @@ class Order(db.Model):
     shipping_cost = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), default="Pending")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expected_delivery_date = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(days=4), nullable=False)
+    delivery_date = db.Column(db.DateTime, nullable=True) 
     quantities = db.Column(db.Float, nullable=False)
     prices = db.Column(db.Float, nullable=False)
 
