@@ -11,7 +11,13 @@
     </style>
 </head>
 <body>
-
+<!-- Container for the background video -->
+    <div id="video-container">
+        <video id="background-video" autoplay muted loop>
+            <source src="{{ url_for('static', filename='videos/password.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category,message in messages%}
