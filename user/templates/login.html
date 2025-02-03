@@ -2,25 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>Login</title>
     <style>
-        a{
-        text-decoration:none;}
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        #background-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            background-size: cover;
+        }
+        .signup-form {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(250, 250, 250, 0.9); /* White background with 80% opacity */
+    padding: 20px;
+    border-radius: 8px;
+    /* Additional styling for the form */
+}
+
+        a {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
-<!-- Container for the background video -->
+    <!-- Container for the background video -->
     <div id="video-container">
         <video id="background-video" autoplay muted loop>
             <source src="{{ url_for('static', filename='videos/password.mp4') }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category,message in messages%}
+            {% for category, message in messages %}
             <div class="{{ category }}">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ message }}
@@ -32,25 +68,23 @@
         <h2>Login</h2>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email"  required>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
             <div id="email-error" class="error"></div>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
             <div>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            <span id="toggle-password" class="password-toggle" onclick="togglePasswordVisibility()">👁️</span>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <span id="toggle-password" class="password-toggle" onclick="togglePasswordVisibility()">👁️</span>
             </div>
             <div id="password-error" class="error"></div>
         </div>
-        <div style="margin-bottom:10px;justify-content: space-between;display: flex;">
+        <div style="margin-bottom: 10px; justify-content: space-between; display: flex;">
             <a href="{{ url_for('logint1.request_reset') }}">Forgot Password</a>
-<a href="{{ url_for('logint1.signup') }}">Create account</a>
-
+            <a href="{{ url_for('logint1.signup') }}">Create account</a>
         </div>
-
         <button type="submit" class="submit-btn">Login</button>
     </form>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </body>
-<script src="{{url_for('static',filename='js/login.js')}}"></script>
 </html>
