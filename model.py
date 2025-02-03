@@ -110,6 +110,17 @@ class Order(db.Model):
 
     order_details = db.relationship('OrderDetail', backref='order')
     notifications = db.relationship('Notification', backref='order')
+    delivery_status = db.Column(db.String(10), nullable=True)  # "On-Time", "Late", or None
+
+    def update_delivery_status(self):
+        """Updates delivery_status only if order status is 'Delivered'."""
+        if self.status == "Delivered" and self.delivery_date:
+            self.delivery_status = "On-Time" if self.delivery_date <= self.expected_delivery_date else "Late"
+        else:
+            self.delivery_status = None  # If not delivered yet
+
+    def __repr__(self):
+        return f'<Order {self.id} - Status: {self.status}, Expected: {self.expected_delivery_date}, Delivered: {self.delivery_date}, Delivery Status: {self.delivery_status}>'
 
 class OrderDetail(db.Model):
     __tablename__ = 'orderdetails'
@@ -166,20 +177,39 @@ class DeliveryIssue(db.Model):
     courier = db.relationship('Courier', back_populates='delivery_issues')  
 
 
+class DeliveryTimingStatus(Enum):
+    ON_TIME = "On-Time"
+    LATE = "Late"
+
 class Courier(db.Model):
     __tablename__ = 'courier'
+    
     sno = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(50))
-    delivery_time = db.Column(db.DateTime)
+    status = db.Column(db.String(50), default="In Transit")  # Pending, Out for Delivery, Delivered
+    delivery_time = db.Column(db.DateTime)  # Estimated delivery time
     courier_name = db.Column(db.String(100))
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    delivery_timing = db.Column(db.Enum(DeliveryTimingStatus))
+    delivered_at = db.Column(db.DateTime, nullable=True)  # Actual delivery timestamp
+    delivery_date = db.Column(db.Enum(DeliveryTimingStatus), nullable=True)
 
-    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'))
-    delivery_issues = db.relationship('DeliveryIssue', back_populates='courier') 
+    order_id = db.Column(db.String(36), db.ForeignKey('order.order_id'))  # Foreign key to order
+    delivery_issues = db.relationship('DeliveryIssue', back_populates='courier')
+
+    order = db.relationship('Order', backref=db.backref('courier', uselist=False))
+
+    def update_order_delivery_status(self):
+        """Updates the order's delivery date and determines if it's On-Time or Late."""
+        if self.status == "Delivered" and self.delivered_at:
+            self.order.delivery_date = self.delivered_at  # Set actual delivery date in order
+            if self.order.expected_delivery_date:
+                self.order.delivery_status = "On-Time" if self.delivered_at <= self.order.expected_delivery_date else "Late"
+            else:
+                self.order.delivery_status = None  # No expected date available
+            db.session.commit()
 
     def __repr__(self):
-        return f"{self.sno}-{self.order_id}-{self.courier_name}-{self.status}"
+        return f"{self.sno} - Order: {self.order_id} - Courier: {self.courier_name} - Status: {self.status}"
+
 
 class PasswordResetToken(db.Model):
     __tablename__ = 'password_reset_tokens'
@@ -876,7 +906,7 @@ def seed_missing_data():
         raise
 
 
-def seed_courier_data():
+"""def seed_courier_data():
     # Clear existing data
     Courier.query.delete()
     db.session.commit()
@@ -936,7 +966,7 @@ def seed_courier_data():
 
     # Commit all changes
     db.session.commit()
-    print("Seeding courier completed successfully!")
+    print("Seeding courier completed successfully!")"""
 
 
 
@@ -947,6 +977,6 @@ if __name__ == '__main__':
         seed_data()
         seed_user()
         seed_missing_data()
-        seed_courier_data()
+        #seed_courier_data()
         seed_orders()
     print("Database setup and seeding complete!")

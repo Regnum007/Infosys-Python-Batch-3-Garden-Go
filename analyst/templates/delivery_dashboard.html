@@ -172,17 +172,17 @@
 
         async function loadSQLData() {
             try {
-                console.log('Starting to load data...');
+                console.log('Loading delivery data...');
                 const response = await fetch('/api/delivery-data');
                 const data = await response.json();
-                console.log('Data received:', data);
+                console.log('Received data:', data);
 
-                if (data && Array.isArray(data)) {
+                if (data) {
                     deliveryData = data;
                     document.getElementById('graphButton').disabled = false;
                     document.getElementById('pieChartButton').disabled = false;
                 } else {
-                    console.error('Invalid data format received');
+                    console.error('Invalid data format');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -203,29 +203,23 @@
         }
 
         function generateGraphs(chartType) {
-            if (!deliveryData.length) {
+            if (!deliveryData) {
                 alert("Data is still loading. Please wait.");
                 return;
             }
 
             const analysisType = document.getElementById("analysisType").value;
-            let filteredData = [];
+            let filteredData = {};
 
             if (analysisType === "daily") {
-                const startDate = document.getElementById("startDate").value;
-                const endDate = document.getElementById("endDate").value;
-                filteredData = deliveryData.filter(item => item.date >= startDate && item.date <= endDate);
+                filteredData = deliveryData.daily;
             } else if (analysisType === "monthly") {
-                const startMonth = document.getElementById("startMonthYear").value + "-01";
-                const endMonth = document.getElementById("endMonthYear").value + "-31";
-                filteredData = deliveryData.filter(item => item.date >= startMonth && item.date <= endMonth);
+                filteredData = deliveryData.monthly;
             } else if (analysisType === "yearly") {
-                const startYear = document.getElementById("startYearOnly").value;
-                const endYear = document.getElementById("endYearOnly").value;
-                filteredData = deliveryData.filter(item => item.date.slice(0, 4) >= startYear && item.date.slice(0, 4) <= endYear);
+                filteredData = deliveryData.yearly;
             }
 
-            if (filteredData.length === 0) {
+            if (Object.keys(filteredData).length === 0) {
                 alert("No data available for the selected range.");
                 return;
             }
@@ -233,51 +227,36 @@
             Object.values(charts).forEach(chart => chart.destroy());
 
             if (chartType === 'histogram') {
-                const binCounts = new Array(24).fill(0);
-                const binLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
-
-                filteredData.forEach(item => {
-                    const hour = item.deliveryTime;
-                    if (hour >= 0 && hour < 24) {
-                        binCounts[hour]++;
-                    }
-                });
+                const labels = Object.keys(filteredData);
+                const onTimeCounts = labels.map(date => filteredData[date]["On-Time"] || 0);
+                const lateCounts = labels.map(date => filteredData[date]["Late"] || 0);
 
                 const ctx = document.getElementById("histogramChart").getContext('2d');
                 charts.histogramChart = new Chart(ctx, {
                     type: "bar",
                     data: {
-                        labels: binLabels,
-                        datasets: [{
-                            label: "Number of Deliveries",
-                            data: binCounts,
-                            backgroundColor: "#007bff",
-                            barPercentage: 0.8,
-                            categoryPercentage: 0.9
-                        }]
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "On-Time Deliveries",
+                                data: onTimeCounts,
+                                backgroundColor: "#28a745",
+                            },
+                            {
+                                label: "Late Deliveries",
+                                data: lateCounts,
+                                backgroundColor: "#dc3545",
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Number of Deliveries'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Hour of Day'
-                                }
-                            }
+                            y: { beginAtZero: true },
+                            x: { title: { display: true, text: 'Time Period' } }
                         },
                         plugins: {
-                            title: {
-                                display: true,
-                                text: 'Distribution of Delivery Times'
-                            }
+                            title: { display: true, text: 'On-Time vs Late Deliveries' }
                         }
                     }
                 });
@@ -287,30 +266,23 @@
             }
 
             if (chartType === 'pie') {
-                const onTimeCount = filteredData.filter(item => item.onTime).length;
-                const notOnTimeCount = filteredData.filter(item => !item.onTime).length;
+                const totalOnTime = Object.values(filteredData).reduce((sum, d) => sum + (d["On-Time"] || 0), 0);
+                const totalLate = Object.values(filteredData).reduce((sum, d) => sum + (d["Late"] || 0), 0);
 
                 const ctx = document.getElementById("pieChart").getContext('2d');
                 charts.pieChart = new Chart(ctx, {
                     type: 'pie',
                     data: {
-                        labels: ['On Time', 'Not On Time'],
+                        labels: ['On Time', 'Late'],
                         datasets: [{
-                            data: [onTimeCount, notOnTimeCount],
-                            backgroundColor: ['#28a745', '#dc3545'],
-                            borderWidth: 1
+                            data: [totalOnTime, totalLate],
+                            backgroundColor: ['#28a745', '#dc3545']
                         }]
                     },
                     options: {
                         responsive: true,
                         plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            title: {
-                                display: true,
-                                text: 'Delivery Timing Distribution'
-                            }
+                            title: { display: true, text: 'Delivery Performance' }
                         }
                     }
                 });

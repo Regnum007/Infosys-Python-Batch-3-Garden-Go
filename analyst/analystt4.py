@@ -76,24 +76,49 @@ def delivery_dashboard():
 @admin_required
 def get_delivery_data():
     try:
-        # Just get all couriers first
-        couriers = Courier.query.all()
+        # Fetch delivered orders only
+        orders = Order.query.filter(Order.status == "Delivered").all()
 
-        delivery_data = []
-        for courier in couriers:
-            if courier.delivery_time:  # Only include if there's a delivery time
-                delivery_data.append({
-                    'date': courier.delivery_time.strftime('%Y-%m-%d'),
-                    'deliveryTime': courier.delivery_time.hour,  # Just using hour for now
-                    'onTime': courier.delivery_timing == DeliveryTimingStatus.ON_TIME
-                })
+        daily_data = {}
+        monthly_data = {}
+        yearly_data = {}
 
-        print(f"Sending {len(delivery_data)} records")  # Debug print
-        return jsonify(delivery_data)
+        for order in orders:
+            if order.delivery_date and order.expected_delivery_date:
+                date_str = order.delivery_date.strftime('%Y-%m-%d')
+                month_str = order.delivery_date.strftime('%Y-%m')
+                year_str = order.delivery_date.strftime('%Y')
+
+                # Determine if order is on-time or late
+                status = "On-Time" if order.delivery_status == "On-Time" else "Late"
+
+                # Daily Aggregation
+                if date_str not in daily_data:
+                    daily_data[date_str] = {"On-Time": 0, "Late": 0}
+                daily_data[date_str][status] += 1
+
+                # Monthly Aggregation
+                if month_str not in monthly_data:
+                    monthly_data[month_str] = {"On-Time": 0, "Late": 0}
+                monthly_data[month_str][status] += 1
+
+                # Yearly Aggregation
+                if year_str not in yearly_data:
+                    yearly_data[year_str] = {"On-Time": 0, "Late": 0}
+                yearly_data[year_str][status] += 1
+
+        response_data = {
+            "daily": daily_data,
+            "monthly": monthly_data,
+            "yearly": yearly_data
+        }
+
+        return jsonify(response_data)
 
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
 
 
 

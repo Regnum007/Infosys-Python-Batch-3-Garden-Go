@@ -279,37 +279,48 @@ def update(sno):
 
     user = User.query.get(session['user_id']) if 'user_id' in session else None
 
-   
-    todo = Courier.query.filter_by(sno=sno).first()
-    if not todo:
-        return "Todo not found", 404
+    # Fetch courier record
+    courier = Courier.query.filter_by(sno=sno).first()
+    if not courier:
+        return "Courier record not found", 404
 
     if request.method == 'POST':
         try:
-            
-            todo.orderid = request.form['orderid']
-            todo.courier_name = request.form['courier_name']
-            todo.status = request.form['status']
+            courier.order_id = request.form['orderid']
+            courier.courier_name = request.form['courier_name']
+            courier.status = request.form['status']
 
-          
-            order = Order.query.get(todo.orderid)
+            # Fetch the order
+            order = Order.query.get(courier.order_id)
             if order:
-                order.status = todo.status  
-                
-               
-                order_details = OrderDetail.query.filter_by(order_id=todo.orderid).all()
+                order.status = courier.status  
+
+                # If the order is delivered, set delivery_date and check status
+                if courier.status == "Delivered":
+                    courier.delivered_at = datetime.utcnow()  # Set actual delivery timestamp
+                    order.delivery_date = courier.delivered_at  # Sync with order table
+
+                    # Determine if delivery is On-Time or Late
+                    if order.expected_delivery_date:
+                        order.delivery_status = "On-Time" if order.delivery_date <= order.expected_delivery_date else "Late"
+                    else:
+                        order.delivery_status = None  # Fallback case
+
+                # Update order details statuses
+                order_details = OrderDetail.query.filter_by(order_id=courier.order_id).all()
                 for detail in order_details:
-                    detail.status = todo.status
+                    detail.status = courier.status
 
             db.session.commit()  
             flash("Order and related statuses updated successfully!", "success")
         except Exception as e:
             db.session.rollback() 
             flash(f"Error: {e}", "danger")
-        return redirect("/courier") 
-    
-   
-    return render_template('update.html', todo=todo, user=user)
+
+        return redirect("/courier")  
+
+    return render_template('update.html', todo=courier, user=user)
+
 
 @couriert3.route('/track', methods=['GET', 'POST'])
 def track_order():
