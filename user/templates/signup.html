@@ -5,9 +5,67 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
 
     <title>Sign Up</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        #background-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            background-size: cover;
+        }
+        .signup-form {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(250, 250, 250, 0.9); /* White background with 80% opacity */
+    padding: 20px;
+    border-radius: 6px;
+    /* Additional styling for the form */
+}
+.signup-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    max-height: 350px; /* Set max height to control container size */
+    overflow-y: auto; /* Allows scrolling if content exceeds max-height */
+}
+
+
+        a {
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Container for the background video -->
+    <div id="video-container">
+        <video id="background-video" autoplay muted loop>
+            <source src="{{ url_for('static', filename='videos/password.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category,message in messages%}
