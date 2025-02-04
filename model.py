@@ -74,6 +74,18 @@ class Cart(db.Model):
     user = db.relationship('User', backref='cart_items')
     product = db.relationship('Product', backref='cart_items')
 
+class Buy(db.Model):
+    _tablename_ = 'buy'
+
+    Buy_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    is_buyed_now = db.Column(db.Boolean, default=False)
+    
+    user = db.relationship('User', backref='buy_items')
+    product = db.relationship('Product', backref='buy_items')
+    
 class Product(db.Model):
     __tablename__ = 'product'
     product_id = db.Column(db.Integer, primary_key=True)
