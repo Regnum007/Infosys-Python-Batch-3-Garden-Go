@@ -670,4 +670,7 @@ def add_shipping_address():
         flash(f"An error occurred: {str(e)}", "danger")
         return redirect(url_for('customert2.view_cart'))
 
+@customert2.route('/faqs')
+def faqs():
+    return render_template('faqs.html')
 
