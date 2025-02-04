@@ -69,10 +69,23 @@
         }
     </style>
 
-    <div class="row align-items-center">
-        <div class="col-md-6 col-12">
-            <img src="/static/{{ product.image_url }}" class="img-fluid product-image" style="height: 450px; width: 500px;" alt="{{ product.name }}">
+<div class="row align-items-center">
+    <div class="col-md-6 col-12 position-relative">
+        <div class="position-relative d-inline-block">
+          
+            <img src="/static/{{ product.image_url }}" class="img-fluid product-image" 
+                 style="height: 450px; width: 500px;" alt="{{ product.name }}">
+
+    
+            <a href="{{ url_for('customert2.direct_add_to_cart',product_id=product.product_id) }}" 
+               class="btn btn-success position-absolute top-0 end-0 m-2">
+                <i class="fa fa-shopping-cart"></i>
+            </a>
         </div>
+    </div>
+
+
+          
         <div class="col-md-6 col-12">
             <h1 style="color: #86d68b; font-weight: 700;">{{ product.name }}</h1>
             <p><strong>Category:</strong> {{ product.category_name }}</p>
@@ -82,8 +95,8 @@
             <p><strong>Stock:</strong> {{ product.stock_quantity }}</p>
 
             <div class="d-flex justify-content-between">
-                <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" class="btn btn-custom btn-add-to-cart m-2" style="background-color: #d03333;">Buy Now</a>
-                <a href="{{ url_for('customert2.add_to_cart', product_id=product.product_id) }}" class="btn btn-custom btn-buy-now m-2" style="background-color: rgb(41, 201, 36);">Add To Cart</a>
+                <a href="{{ url_for('customert2.buy_nows', product_id=product.product_id) }}" class="btn btn-custom btn-add-to-cart m-2" style="background-color:rgb(41, 201, 36) ;">Buy Now</a>
+                <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" class="btn btn-custom btn-buy-now m-2" style="background-color: #d03333;">Add To The Saved Cart Items</a>
             </div>
         </div>
     </div>
