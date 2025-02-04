@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for, flash,jsonify
-from model import Product, User, db, Order,OrderDetail,Cart,Address,Sub,Sales
+from model import Product, User, db, Order,OrderDetail,Cart,Address,Sub,Sales,Buy
 from datetime import datetime
 import re  
 import uuid
@@ -197,6 +197,77 @@ def filter_categorycustomer(category):
     return render_template("products.html", user=user, products=products, 
                            other_products=other_category_products) 
 
+
+@customert2.route('/buy')
+def buy_cart():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('logint1.login'))
+
+    user = User.query.get(user_id)
+
+    # Fetch all addresses and find the default address
+    all_addresses = Address.query.filter_by(user_id=user_id).all()
+    default_address = next((address for address in all_addresses if address.default_address), None)
+
+    # Fetch the latest cart item for the user (ensuring only one item at a time)
+    buy_items = Buy.query.filter_by(user_id=user_id).order_by(Buy.Buy_id.desc()).first()
+
+    if not buy_items:
+        return render_template('buy.html', buy=[], user=user, 
+                               default_address=default_address, all_addresses=all_addresses,
+                               total_price=0, total_weight=0, shipping_cost=0, 
+                               grand_total=0, free_shipping=False, buy_empty=True)
+
+    # Calculate total price and weight (only one item in the cart)
+    total_price = buy_items.product.selling_price * buy_items.quantity
+    total_weight = buy_items.product.weight * buy_items.quantity
+
+    # Shipping cost logic
+    shipping_cost = 29  # Default shipping cost
+    state = session.get('state')
+    postal_code = session.get('postal_code')
+
+    if state and postal_code:
+        try:
+            postal_code = int(postal_code)  # Ensure it's an integer
+            if state in calculate_states:
+                zip_range = calculate_states[state]
+                if zip_range[0] <= postal_code <= zip_range[1]:
+                    shipping_cost = 0  # Free shipping
+                else:
+                    shipping_cost = 29  # Standard shipping
+            else:
+                shipping_cost = 29  # Default shipping cost
+        except ValueError:
+            shipping_cost = 29  # Default shipping cost
+
+    # Additional logic for weight and price-based shipping cost
+    if total_price > 700 or total_weight > 900:
+        shipping_cost = 40
+
+    # Calculate grand total
+    grand_total = total_price + shipping_cost  # Adding shipping cost to grand total
+
+    # If free shipping, set grand_total to just total_price
+    if shipping_cost == 0:
+        grand_total = total_price
+
+    return render_template(
+        'buy.html',
+        buy=[buy_items],  # Only one product in the cart
+        user=user,
+        default_address=default_address,  
+        all_addresses=all_addresses,
+        total_price=total_price,
+        total_weight=total_weight,
+        shipping_cost=shipping_cost,
+        free_shipping=(shipping_cost == 0),
+        grand_total=grand_total,
+        cart_empty=False
+    )
+
+
 @customert2.route('/cart')
 def view_cart():
     user_id = session.get('user_id')
@@ -334,6 +405,25 @@ def buy_now(product_id):
     
     return redirect(url_for('customert2.view_cart'))
 
+@customert2.route('/buy_nows/<int:product_id>', methods=['GET'])
+def buy_nows(product_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        
+        return redirect(url_for('logint1.login'))
+    
+    product = Product.query.get_or_404(product_id)
+    buy_items = Buy.query.filter_by(user_id=user_id, product_id=product_id).first()
+
+    if buy_items:
+        buy_items.quantity += 1
+    else:
+        buy_items = Buy(user_id=user_id, product_id=product_id, quantity=1)
+        db.session.add(buy_items)
+    
+    db.session.commit()
+    
+    return redirect(url_for('customert2.buy_cart'))
 
 # Remove from Cart
 @customert2.route('/remove_from_cart/<int:product_id>', methods=['POST'])
@@ -350,6 +440,21 @@ def remove_from_cart(product_id):
     
     return redirect(url_for('customert2.view_cart',user=user))
 
+@customert2.route('/remove_from_buy/<int:product_id>', methods=['POST'])
+def remove_from_buy(product_id):
+    user_id = session.get('user_id')
+    user = None
+    if not user_id:
+        return redirect(url_for('customert2.buy_cart'))
+
+    buy_items = Buy.query.filter_by(user_id=user_id, product_id=product_id).first()
+    if buy_items:
+        db.session.delete(buy_items)
+        db.session.commit()
+    
+    return redirect(url_for('customert2.buy_cart',user=user))
+
+
 # Delete Cart
 @customert2.route('/delete_cart', methods=['POST'])
 def delete_cart():
@@ -358,6 +463,8 @@ def delete_cart():
         Cart.query.filter_by(user_id=user_id).delete()
         db.session.commit()
     return redirect(url_for('customert2.view_cart'))
+
+
 
 @customert2.route('/get_cart_data', methods=['GET'])
 def get_cart_data():
@@ -408,7 +515,24 @@ def increment_quantity(product_id):
     
     return redirect(url_for('customert2.view_cart'))
 
-# Decrement quantity in the cart
+@customert2.route('/increment_quantitybuy/<int:product_id>', methods=['POST'])
+def increment_quantitybuy(product_id):
+    user_id = session.get('user_id')  
+    
+    
+    buy_items = Buy.query.filter_by(user_id=user_id, product_id=product_id).first()
+
+    if buy_items:
+        buy_items.quantity += 1  
+        db.session.commit()  
+    else:
+       
+        pass
+
+    
+    return redirect(url_for('customert2.buy_cart'))
+
+
 @customert2.route('/decrement_quantity/<int:product_id>', methods=['POST'])
 def decrement_quantity(product_id):
     user_id = session.get('user_id') 
@@ -428,6 +552,26 @@ def decrement_quantity(product_id):
 
     
     return redirect(url_for('customert2.view_cart'))
+# Decrement quantity in the cart
+@customert2.route('/decrement_quantitybuy/<int:product_id>', methods=['POST'])
+def decrement_quantitybuy(product_id):
+    user_id = session.get('user_id') 
+    
+    
+    buy_items = Cart.query.filter_by(user_id=user_id, product_id=product_id).first()
+
+    if buy_items:
+        if buy_items.quantity > 1:
+            buy_items.quantity -= 1  
+        else:
+            db.session.delete(buy_items)  
+        db.session.commit()  
+    else:
+        
+        pass
+
+    
+    return redirect(url_for('customert2.buy_cart'))
 
 
 
@@ -554,6 +698,69 @@ def order_history():
     
     return render_template('order_history.html', order_details=order_details,user=user,user_id=user_id,products=filtered_products if query else products)
 
+
+
+
+@customert2.route("/buy_now_from_buy", methods=["POST"])
+@customer_required
+def buy_now_from_buy():
+    user_id = session.get('user_id')
+    shipping_cost = request.form.get('shippingCost')
+      
+    
+    if shipping_cost:
+        
+        numeric_shipping_cost = re.sub(r'[^\d.]+', '', shipping_cost)
+        try:
+            shipping_cost = float(numeric_shipping_cost) 
+        except ValueError:
+            shipping_cost = 0.0  
+
+   
+    buy_items = Buy.query.filter_by(user_id=user_id).all()
+    if not buy_items:
+        return redirect(url_for('customert2.buy_cart'))
+    total_price = sum(item.product.selling_price * item.quantity for item in buy_items)
+    total_weight = sum(item.product.weight * item.quantity for item in buy_items)
+
+ 
+    grand_total = total_price + shipping_cost
+
+    
+    order = Order(
+        order_id=str(uuid.uuid4()),
+        user_id=user_id,
+        total_price=grand_total,
+        shipping_cost=shipping_cost,
+        status="Pending",
+        created_at=datetime.utcnow(),
+        quantities=len(buy_items),
+        prices=total_price
+    )
+    db.session.add(order)
+    db.session.commit()
+
+ 
+    for item in buy_items:
+        order_detail = OrderDetail(
+            order_id=order.order_id,
+            product_id=item.product_id,
+            quantity=item.quantity,
+            sub_Total=item.product.selling_price * item.quantity
+        )
+        db.session.add(order_detail)
+
+   
+    try:
+        Buy.query.filter_by(user_id=user_id).delete()
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error clearing cart: {str(e)}")
+
+   
+    return redirect(url_for('customert2.order_confirmation_cart', order_id=order.order_id, shippingCost=shipping_cost))
+
 # Buy Now
 
 @customert2.route("/buy_now_from_cart", methods=["POST"])
@@ -673,4 +880,3 @@ def add_shipping_address():
 @customert2.route('/faqs')
 def faqs():
     return render_template('faqs.html')
-
