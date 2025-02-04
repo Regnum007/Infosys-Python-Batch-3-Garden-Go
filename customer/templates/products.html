@@ -27,7 +27,6 @@
         </li>
     </ul>
 </li>
-
 {% endblock %}
 
 {% block sign %}
@@ -64,9 +63,24 @@
     .card-body { flex-grow: 1; }
     .btn-sort { background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
     .btn-sort:hover { background-color: #45a049; }
+    /* Styling for the video banner */
+    .video-banner {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        position: relative;
+    }
 </style>
 
 <div class="container my-5">
+    <!-- Video Banner -->
+    <div class="video-container mb-4">
+        <video class="video-banner" autoplay loop muted>
+            <source src="{{ url_for('static', filename='videos/banner.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
     <!-- Buttons (Sort on left, Subscribe on right) -->
     <div class="d-flex justify-content-between mb-3">
         <!-- Sort Button on Left -->
@@ -125,7 +139,7 @@
             background-color: #e53935;
         }
     </style>
-  
+
     <!-- Sort Modal -->
     <div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -188,49 +202,17 @@
     </div>
 </div>
 
-<!-- Other Products Section -->
-<div class="container my-5">
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% for other_product in other_products %}
-        {% if loop.first %}
-        <div class="col-12" style="text-align: center; width: 100%; color: #4CAF50;">
-            <h3>Explore More Products</h3>
-        </div>
-        {% endif %}
-        <div class="col">
-            <a href="{{ url_for('customert2.product_detail', id=other_product.product_id) }}" class="text-decoration-none text-dark">
-                <div class="card h-100">
-                    <img src="{{ url_for('static', filename=other_product.image_url) }}" class="card-img-top" alt="{{ other_product.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ other_product.name }}</h5>
-                        <p class="card-text">Category: {{ other_product.category_name }}</p>
-                        <p class="card-text">Description: {{ other_product.description }}</p>
-                        <p class="card-text">Weight: {{ other_product.weight }} g</p>
-                        <p class="card-text">Price: INR {{ other_product.selling_price }}</p>
-                        <div class="text-end">
-                            <a href="{{ url_for('customert2.direct_add_to_cart', product_id=other_product.product_id) }}" 
-                               class="btn btn-custom btn-buy-now m-2" 
-                               style="background-color: rgb(47, 181, 38);">
-                                Add To Cart
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-</div>
 <!-- Footer -->
- <footer class="text-center py-4 bg-dark text-white mt-5">
+<footer class="text-center py-4 bg-dark text-white mt-5">
     <p>&copy; 2024 Web App. All Rights Reserved.</p>
     <a href="{{ url_for('logint1.about') }}" class="footer-btn mt-3">About Us</a>
     <a href="{{ url_for('customert2.faqs') }}" class="footer-btn mt-3">FAQs</a>
 </footer>
+
 <script>
     function redirectToPage() {
-    window.location.href = "{{ url_for('couriert3.show_subscribers') }}";
-}
+        window.location.href = "{{ url_for('couriert3.show_subscribers') }}";
+    }
 </script>
 
 {% endblock %}
