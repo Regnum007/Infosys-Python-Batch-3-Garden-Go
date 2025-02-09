@@ -6,6 +6,25 @@
 <li>
 <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.edit_product') }}">Home</a></li>
 {% endblock %}
+<<<<<<< HEAD
+=======
+{% block category %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="font-size: 20px;" aria-expanded="false">Category</a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        
+            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Seeds') }}" onclick="showContainer();">Seeds</a>
+        </li>
+        <li>
+            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Plants') }}" onclick="showContainer();">Plants</a>
+        </li>
+        <li>
+            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Wild edible plants') }}" onclick="showContainer();">Wild Edible Plants</a>
+        </li>
+    </ul>
+</li>
+{% endblock %}
+>>>>>>> 29a49f9 (Updated files)
 {% block search %}
 <form class="d-flex me-3" action="{{ url_for('admint2.edit_product') }}" method="get">
     <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
@@ -98,8 +117,15 @@
                         <h5 class="card-title">{{ product.name }}</h5>
                         <p class="card-text">Category: {{ product.category_name }}</p>
                         <p class="card-text">Weight: {{ product.weight }} g</p>
+<<<<<<< HEAD
                         <p class="card-text">Cost Price: INR {{ product.cost_price }}</p>
                         <p class="card-text">Selling Price: INR {{ product.selling_price }}</p>
+=======
+                        <p class="card-text">Description: {{ product.description }}</p>
+                        <p class="card-text">Cost Price: INR {{ product.cost_price }}</p>
+                        <p class="card-text">Selling Price: INR {{ product.selling_price }}</p>
+                        <p class="card-text">Quantity: {{ product.stock_quantity }}</p>
+>>>>>>> 29a49f9 (Updated files)
                     </div>
                 </div>
             </div>

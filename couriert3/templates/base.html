@@ -18,7 +18,12 @@
         }
         
         .navbar .nav-links a {
+<<<<<<< HEAD
             padding: 10px 20px;
+=======
+            padding: 8px 8px;
+            gap: 8px;
+>>>>>>> 29a49f9 (Updated files)
             border-radius: 5px;
             color: white;
             text-decoration: none;
@@ -43,6 +48,7 @@
                 {% if user.role == 'Admin' %}
                     <!-- Admin/Courier-specific navigation -->
                     <li class="nav-item">
+<<<<<<< HEAD
                         <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a>
                     </li>
                     <li><a href="{{ url_for('couriert3.track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
@@ -50,6 +56,18 @@
                     <li><a href="{{ url_for('couriert3.monitor_progress') }}"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
                     <li><a href="{{ url_for('couriert3.report_issue') }}"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
                     <li><a href="../bellicon.html"><i class="fas fa-bell notification-icon"></i>Notification</a></li>
+=======
+                        <a class="nav-link" style="font-size: 17px;" href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 17px;" href="{{ url_for('couriert3.home') }}">Update Order Status</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 17px;" href="{{ url_for('couriert3.track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 17px;" href="{{ url_for('couriert3.show_subscribers') }}"><i class="fas fa-users"></i> Subscribers</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 17px;" href="{{ url_for('couriert3.monitor_progress') }}"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 17px;" href="{{ url_for('couriert3.report_issue') }}"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 17px;" href="../bellicon.html"><i class="fas fa-bell notification-icon"></i>Notification</a></li>
+>>>>>>> 29a49f9 (Updated files)
                  {% endif %}
 
 
@@ -58,11 +76,19 @@
                     <li class="nav-item">
                         <a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.home') }}">Courier Dashboard</a>
                     </li>
+<<<<<<< HEAD
                     <li><a href="{{ url_for('couriert3.track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
                     <li><a href="{{ url_for('couriert3.show_subscribers') }}"><i class="fas fa-users"></i> Subscribers</a></li>
                     <li><a href="{{ url_for('couriert3.monitor_progress') }}"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
                     <li><a href="{{ url_for('couriert3.report_issue') }}"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
                     <li><a href="../bellicon.html"><i class="fas fa-bell notification-icon"></i>Notification</a></li>
+=======
+                    <li class="nav-item"><a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.show_subscribers') }}"><i class="fas fa-users"></i> Subscribers</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.monitor_progress') }}"><i class="fas fa-chart-line"></i> Monitor Progress</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.report_issue') }}"><i class="fas fa-exclamation-circle"></i> Report Issue</a></li>
+                    <li class="nav-item"><a class="nav-link" style="font-size: 20px;" href="../bellicon.html"><i class="fas fa-bell notification-icon"></i>Notification</a></li>
+>>>>>>> 29a49f9 (Updated files)
                   
                     {% endif %}
             {% endif %}

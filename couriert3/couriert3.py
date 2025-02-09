@@ -449,7 +449,11 @@ def monitor_progress():
     )
 
     
+<<<<<<< HEAD
     status_count = {status: 0 for status in ['Dispatched', 'Out for Delivery', 'Delivered', 'Failed Attempt', 'In Transit']}
+=======
+    status_count = {status: 0 for status in ['Dispatched', 'Out for Delivery', 'Delivered', 'Failed Attempt', 'In transit']}
+>>>>>>> 29a49f9 (Updated files)
     for c in couriers:
         status_count[c.status.capitalize()] += 1
 

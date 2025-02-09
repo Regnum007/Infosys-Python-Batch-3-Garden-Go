@@ -95,8 +95,13 @@
             <p><strong>Stock:</strong> {{ product.stock_quantity }}</p>
 
             <div class="d-flex justify-content-between">
+<<<<<<< HEAD
                 <a href="{{ url_for('customert2.buy_nows', product_id=product.product_id) }}" class="btn btn-custom btn-add-to-cart m-2" style="background-color:rgb(41, 201, 36) ;">Buy Now</a>
                 <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" class="btn btn-custom btn-buy-now m-2" style="background-color: #d03333;">Add To The Saved Cart Items</a>
+=======
+                <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" class="btn btn-custom btn-add-to-cart m-2" style="background-color:rgb(41, 201, 36) ;">Buy Now</a>
+                <a href="{{ url_for('customert2.add_to_cart', product_id=product.product_id) }}" class="btn btn-custom btn-buy-now m-2" style="background-color: #d03333;">Add To Cart</a>
+>>>>>>> 29a49f9 (Updated files)
             </div>
         </div>
     </div>

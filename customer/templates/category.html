@@ -77,13 +77,18 @@
         <div class="row row-cols-1 row-cols-md-4 g-4">
             {% for product in products %}
                 <div class="col">
+<<<<<<< HEAD
                     <a href="{{ url_for('customert2.product_detail', id=product.product_id) }}" class="text-decoration-none text-dark">
                         <div class="card h-100">
+=======
+                    <div class="card h-100">
+>>>>>>> 29a49f9 (Updated files)
                             <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
 
                             <div class="card-body">
                                 <h5 class="card-title">{{ product.name }}</h5>
                                 <p class="card-text">Category: {{ product.category_name }}</p>
+<<<<<<< HEAD
 
                                 <p class="card-text">Description: {{ product.description }}</p>
                                 <p class="card-text">Weight: {{ product.weight }} g</p>
@@ -91,6 +96,16 @@
                             </div>
                         </div>
                     </a>
+=======
+                                <p class="card-text">Weight: {{ product.weight }} g</p>
+                                <p class="card-text">Description: {{ product.description }}</p>
+                                <p class="card-text">Cost Price: INR {{ product.cost_price }}</p>
+                                <p class="card-text">Selling Price: INR {{ product.selling_price }}</p>
+                                <p class="card-text">Quantity: {{ product.stock_quantity }}</p>
+                            </div>
+                        </div>
+                   
+>>>>>>> 29a49f9 (Updated files)
                 </div>
             {% else %}
                 <p class="text-center">No products found.</p>

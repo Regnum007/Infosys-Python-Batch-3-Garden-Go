@@ -43,7 +43,12 @@ def filteradmin_category(category):
 def edit_product():
     query = request.args.get("query", "").lower()
     sort = request.args.get("sort", "default")
+<<<<<<< HEAD
     products = Product.query.all()
+=======
+    products = products = Product.query.filter_by(is_deleted=False).all() 
+
+>>>>>>> 29a49f9 (Updated files)
     ordered_products = []
 
     # Apply search filtering
@@ -94,17 +99,31 @@ def edit_product():
 @admint2.route('/admin/edit/modify', methods=['GET', 'POST'])
 @admin_required
 def modify_products():
+<<<<<<< HEAD
     products = Product.query.all()
+=======
+    # Fetch only non-deleted products
+    products = Product.query.filter_by(is_deleted=False).all()
+>>>>>>> 29a49f9 (Updated files)
     selected_product = None
 
     if request.method == 'POST':
         product_name = request.form.get('product_name')
+<<<<<<< HEAD
         
         if product_name:
             selected_product = Product.query.filter_by(name=product_name).first()
             
             if not selected_product:
                 flash('Selected product not found.', 'danger')
+=======
+
+        if product_name:
+            selected_product = Product.query.filter_by(name=product_name, is_deleted=False).first()
+            
+            if not selected_product:
+                flash('Selected product not found or has been deleted.', 'danger')
+>>>>>>> 29a49f9 (Updated files)
                 return redirect(url_for('admint2.modify_products'))
 
             selected_product.name = request.form.get('name', selected_product.name)
