@@ -71,7 +71,6 @@
         position: relative;
     }
 </style>
-<<<<<<< HEAD
 
 <div class="container my-5">
     <!-- Video Banner -->
@@ -108,33 +107,6 @@
             </form>
         </div>
     </div>
-=======
-<!-- Sort and Subscribe buttons -->  
-<div class="d-flex justify-content-between my-3">  
-    <div>  
-        <button class="btn-sort" data-bs-toggle="modal" data-bs-target="#sortModal">  
-            <i class="fas fa-filter"></i> Sort Products  
-        </button>  
-    </div>  
-
-    <!-- Subscribe Button -->  
-    <div>  
-        <form action="{{ url_for('customert2.subscribe') }}" method="post" style="display: inline;">  
-            <button   
-                type="submit"   
-                class="btn {% if subscribed %}btn-unsubscribe{% else %}btn-subscribe{% endif %}">  
-                {% if subscribed %}  
-                    <i class="fas fa-bell-slash"></i>  
-                    Unsubscribe  
-                {% else %}  
-                    <i class="fas fa-bell"></i>  
-                    Subscribe  
-                {% endif %}  
-            </button>  
-        </form>  
-    </div>  
-</div>
->>>>>>> 29a49f9 (Updated files)
 
     <style>
         /* General button styles */
@@ -202,11 +174,7 @@
 
     <!-- Product List -->
     <div class="row row-cols-1 row-cols-md-4 g-4">
-<<<<<<< HEAD
         {% for product in products %}
-=======
-        {% for product in products [:4]%}
->>>>>>> 29a49f9 (Updated files)
         <div class="col">
             <a href="{{ url_for('customert2.product_detail', id=product.product_id) }}" class="text-decoration-none text-dark">
                 <div class="card h-100">
@@ -218,8 +186,6 @@
                         <p class="card-text">Weight: {{ product.weight }} g</p>
                         <p class="card-text">Price: INR {{ product.selling_price }}</p>
                         <div class="text-end">
-<<<<<<< HEAD
-=======
                             <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" 
                                class="btn btn-custom btn-buy-now m-2" 
                                style="background-color: rgb(62, 218, 60);">
@@ -262,7 +228,6 @@
                                style="background-color: rgb(62, 218, 60);">
                                 Buy Now
                             </a>
->>>>>>> 29a49f9 (Updated files)
                             <a href="{{ url_for('customert2.direct_add_to_cart', product_id=product.product_id) }}" 
                                class="btn btn-custom btn-buy-now m-2" 
                                style="background-color: rgb(62, 218, 60);">

@@ -19,11 +19,7 @@ logint1 = Blueprint("logint1", __name__, static_folder="static", template_folder
 def index():
     query = request.args.get("query", "").lower()
     sort = request.args.get("sort", "default")
-<<<<<<< HEAD
-    products = Product.query.all()
-=======
     products = products = Product.query.filter_by(is_deleted=False).all() 
->>>>>>> 29a49f9 (Updated files)
     
     ordered_products = []
     
@@ -48,11 +44,7 @@ def index():
 @logged_in
 def indexproduct(id):
     product = Product.query.get_or_404(id)
-<<<<<<< HEAD
-    other_products = Product.query.filter(Product.product_id != id).all()
-=======
     other_products = Product.query.filter(Product.product_id != id, Product.is_deleted == False).all()
->>>>>>> 29a49f9 (Updated files)
 
     return render_template('indexpeoduct.html',other_products=other_products, product=product)
 
