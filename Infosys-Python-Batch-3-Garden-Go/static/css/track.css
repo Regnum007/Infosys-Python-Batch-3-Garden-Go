@@ -1,0 +1,113 @@
+
+
+
+
+.order-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    position: relative;
+}
+
+.step {
+    text-align: center;
+    position: relative;
+    flex-grow: 1;
+    color: #888; /* Default color for inactive statuses */
+}
+
+.step p {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ccc; /* Default color for inactive circles */
+    margin: 0 auto;
+    transition: background-color 1s ease, transform 1s ease;
+}
+
+.step.current .circle {
+    background-color: #4caf50; /* Green for active status */
+    transform: scale(1.2); /* Enlarged size for current step */
+}
+
+.step:nth-child(1) .circle {
+    background-color: #2196F3; /* Blue for Dispatched */
+}
+
+.step:nth-child(2) .circle {
+    background-color: #ff9800; /* Orange for In Transit */
+}
+
+.step:nth-child(3) .circle {
+    background-color: #ff5722; /* Red for Out for Delivery */
+}
+
+.step:nth-child(4) .circle {
+    background-color: #8bc34a; /* Light Green for Delivered */
+}
+
+.step:nth-child(5) .circle {
+    background-color: #f44336; /* Dark Red for Failed Attempt */
+}
+
+.step.current:nth-child(1) .circle {
+    background-color: #2196F3; /* Active color for Dispatched */
+}
+
+.step.current:nth-child(2) .circle {
+    background-color: #ff9800; /* Active color for In Transit */
+}
+
+.step.current:nth-child(3) .circle {
+    background-color: #ff5722; /* Active color for Out for Delivery */
+}
+
+.step.current:nth-child(4) .circle {
+    background-color: #8bc34a; /* Active color for Delivered */
+}
+
+.step.current:nth-child(5) .circle {
+    background-color: #f44336; /* Active color for Failed Attempt */
+}
+
+/* Add this line to connect the steps */
+.step-line {
+    height: 2px;
+    background-color: #ccc; /* Default color for inactive lines */
+    flex-grow: 1;
+    position: absolute;
+    top: 15px; /* Adjust this value to align with the circles */
+    left: 30px; /* Adjust this value to align the lines */
+    z-index: -1;
+}
+
+/* Update this dynamically based on current status */
+.step.current + .step .step-line {
+    background-color: #4caf50; /* Green for active step */
+}
+
+.step:nth-child(1) .step-line {
+    background-color: #2196F3; /* Blue for Dispatched */
+}
+
+.step:nth-child(2) .step-line {
+    background-color: #ff9800; /* Orange for In Transit */
+}
+
+.step:nth-child(3) .step-line {
+    background-color: #ff5722; /* Red for Out for Delivery */
+}
+
+.step:nth-child(4) .step-line {
+    background-color: #8bc34a; /* Light Green for Delivered */
+}
+
+.step:nth-child(5) .step-line {
+    background-color: #f44336; /* Dark Red for Failed Attempt */
+}

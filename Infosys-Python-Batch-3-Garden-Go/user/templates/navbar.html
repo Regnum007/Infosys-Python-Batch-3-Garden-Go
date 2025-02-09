@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block head %}
+    <title>Customer</title>
+    {% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+   
+    <style>
+        
+        .navbar-custom {
+            background: linear-gradient(90deg, #5adb5a, #05994d);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            background-color: white; /* White background */
+            padding: 5px; /* Padding around the logo */
+            border-radius: 15px; /* Rounded corners for smooth effect */
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+        .nav-link {
+            color: white !important;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #d4f4e0 !important;
+        }
+        .navbar-toggler-icon {
+            background-color: white;
+        }
+        .search-bar {
+            border-radius: 20px;
+            border: 1px solid white;
+            padding-left: 10px;
+        }
+        .search-bar::placeholder {
+            color:#86d68b;
+            font-size: 14px;
+        }
+        .search-btn {
+            border-radius: 20px;
+        }
+
+        /* Modern Heading with Border */
+        .modern-heading {
+            display: inline-block;
+            position: relative;
+            font-size: 28px;
+            font-weight: bold;
+            color: #57ba98;
+            text-align: center;
+            padding: 15px 25px;
+            border: 4px solid #86d68b;
+            border-radius: 15px;
+            background-color: #f9fff9;
+            margin-bottom: 30px;
+        }
+        .modern-heading::before,
+        .modern-heading::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .modern-heading::before {
+            top: -40px;
+            left: -60px;
+            background-image: url('{{ url_for("static", filename="images/leaf.png") }}');
+        }
+        .modern-heading::after {
+            top: -40px;
+            right: -60px;
+            background-image: url('{{ url_for("static", filename="images/tree.png") }}');
+        }
+
+        /* Alert Styling */
+        .alert {
+            padding: 10px;
+            margin: 20px 20px 0;
+            border: 1px solid transparent;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert .closebtn {
+            margin-left: 15px;
+            color: #aaa;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .alert .closebtn:hover {
+            color: black;
+        }
+
+        /* Product Section Styling */
+        .card {
+            border: 2px solid #86d68b;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #86d68b;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #57ba98;
+        }
+        .card-text {
+            font-size: 14px;
+            color: #333;
+        }
+        .footer-btn {
+            background-color: #86d68b;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .footer-btn:hover {
+            background-color: #57ba98;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+   
+<nav class="navbar navbar-expand-lg navbar-custom py-2">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="{{url_for('static', filename='images/logo.png')}}" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% block home %}
+                {% if user and user.role == 'Admin' %}
+                    <!-- Admin-specific navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a>
+                    </li>
+                {% elif user and user.role == 'User' %}
+                    <!-- User-specific navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('customert2.product_list') }}">Products</a>
+                    </li>
+                    {% elif user and user.role == 'Courier' %}
+                    <!-- User-specific navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('couriert3.home') }}">Courier</a>
+                    </li>    
+                {% else %}
+                    <!-- Default or guest navigation -->
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('logint1.login') }}">Login</a>
+                    </li>
+                {% endif %}
+            {% endblock %}
+            
+                <li class="nav-item">
+                    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('logint1.about') }}">About</a>
+                </li>{% block category %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="font-size: 20px;" aria-expanded="false">Category</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_categorycustomer', category='All') }}">All</a></li>
+                        <li>
+                            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_categorycustomer', category='Seeds') }}" onclick="showContainer();">Seeds</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_categorycustomer', category='Plants') }}" onclick="showContainer();">Plants</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_categorycustomer', category='Wild edible plants') }}" onclick="showContainer();">Wild Edible Plants</a>
+                        </li>
+                    </ul>
+                </li>
+                {% endblock %}
+            </ul>
+            {% block search %}
+            <form class="d-flex align-items-center me-3" action="{{ url_for('customert2.product_list') }}" method="get" style="max-width: 400px; width: 100%;">
+                <input 
+                    class="form-control search-bar me-2" 
+                    type="search" 
+                    name="query" 
+                    placeholder="Search for products..." 
+                    style="border-radius: 20px; padding: 10px; border: 2px solid #37bd49,#001000; background-color: #e7f0e9; color: rgb(25, 178, 25); outline: none; transition: box-shadow 0.3s;"
+                >
+                <button 
+                    class="btn btn-primary search-btn" 
+                    type="submit" 
+                    style="border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background-color: #f6fbf7;"
+                >
+                    <i class="fas fa-search" style="color: rgb(23, 197, 23);"></i> <!-- Search icon color set to white -->
+                </button>
+            </form>
+            
+            {% endblock %}
+            {% block user %} {% endblock %}
+            {%  block sign %}
+            
+            {% endblock %}
+            {% block part %}{% endblock %}
+           
+        </div>
+    </div>
+</nav>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% block body %}{% endblock %}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='js/activity_tracker.js') }}"></script>
+</body>
+</html>

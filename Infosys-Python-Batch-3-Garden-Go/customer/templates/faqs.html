@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garden Go Auto Courier - FAQ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        h1 { text-align: center; padding: 20px; background-color: #4CAF50; color: white; }
+        .container { width: 80%; margin: 20px auto; }
+        .faq-section { margin-bottom: 40px; }
+        h2 { background-color: #4CAF50; color: white; padding: 10px; cursor: pointer; }
+        .faq-item { margin-bottom: 15px; }
+        .faq-answer { display: none; padding-left: 20px; }
+        .footer { text-align: center; padding: 20px; background-color: #f1f1f1; }
+        
+        /* New styling for the questions */
+        h3 {
+            background-color: #e0f7fa; /* Light green background */
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease; /* Smooth color transition */
+        }
+    
+        /* Optional hover effect for questions */
+        h3:hover {
+            background-color: #b2ebf2; /* Slightly darker green on hover */
+        }
+    </style>
+    
+</head>
+<body>
+
+<h1>Garden Go Auto Courier - Frequently Asked Questions</h1>
+
+<div class="container">
+    <div class="faq-section">
+        <h2>FAQs for Customers</h2>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(1)">1. How do I place an order for courier services?</h3>
+            <div id="answer-1" class="faq-answer">
+                <p>You can place an order by visiting our website and filling out the courier request form with the necessary details such as pickup and delivery address, package size, and any specific instructions.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(2)">2. What types of items can I send through your courier service?</h3>
+            <div id="answer-2" class="faq-answer">
+                <p>We handle a wide range of items, from small packages to larger garden-related products. Please ensure your item is well-packed and does not violate any shipping regulations.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(3)">3. How do I track my package?</h3>
+            <div id="answer-3" class="faq-answer">
+                <p>Once your order is confirmed, you will receive a tracking ID to track your package through our website or app in real-time.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(4)">4. Can I change the delivery address after placing an order?</h3>
+            <div id="answer-4" class="faq-answer">
+                <p>Yes, you can change the delivery address by contacting our customer service before the package is dispatched. After dispatch, changes may not be possible.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(5)">5. What are the payment options available?</h3>
+            <div id="answer-5" class="faq-answer">
+                <p>We accept payments via credit/debit cards, digital wallets, and cash on delivery.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(6)">6. How do I know if my order has been successfully placed?</h3>
+            <div id="answer-6" class="faq-answer">
+                <p>After placing an order, you will receive a confirmation email and SMS with your order details and tracking number.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(7)">7. What should I do if my package is delayed?</h3>
+            <div id="answer-7" class="faq-answer">
+                <p>Please contact our customer support team immediately if your package is delayed, and we will investigate the issue and keep you updated.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(8)">8. Is there an option to schedule a delivery time?</h3>
+            <div id="answer-8" class="faq-answer">
+                <p>Yes, we offer scheduled delivery times based on availability. Please select your preferred time when placing the order.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(9)">9. Can I cancel my order?</h3>
+            <div id="answer-9" class="faq-answer">
+                <p>You can cancel your order before it is dispatched. Once dispatched, cancellation may not be possible, but please contact support for assistance.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(10)">10. How do I contact customer support?</h3>
+            <div id="answer-10" class="faq-answer">
+                <p>You can reach our customer support team via email, phone, or live chat on our website.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(11)">11. Can I send perishable items?</h3>
+            <div id="answer-11" class="faq-answer">
+                <p>We do not recommend sending perishable items as our service does not guarantee timely delivery under certain conditions.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(12)">12. Do you offer international shipping?</h3>
+            <div id="answer-12" class="faq-answer">
+                <p>Currently, we only offer domestic courier services. However, we are working on expanding to international deliveries.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(13)">13. What should I do if the recipient is unavailable during delivery?</h3>
+            <div id="answer-13" class="faq-answer">
+                <p>If the recipient is unavailable, we will attempt to reschedule the delivery. If we cannot reach them, the package will be returned.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(14)">14. Are there any restrictions on package size or weight?</h3>
+            <div id="answer-14" class="faq-answer">
+                <p>Yes, we have size and weight limitations. Please check our website for detailed guidelines on package dimensions and weight.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(15)">15. How do I request a refund?</h3>
+            <div id="answer-15" class="faq-answer">
+                <p>If your package was lost or damaged, you can request a refund by contacting our customer support with your order details.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2>FAQs for Couriers</h2>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(16)">1. How do I become a courier for Garden Go Auto Courier?</h3>
+            <div id="answer-16" class="faq-answer">
+                <p>To become a courier, visit our website and fill out the registration form with your details. We will review your application and provide training to help you get started.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(17)">2. What is the pay structure for couriers?</h3>
+            <div id="answer-17" class="faq-answer">
+                <p>Couriers are paid based on distance, package weight, and the urgency of the delivery. You will receive payment weekly for completed deliveries.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(18)">3. Do I need a specific vehicle to deliver packages?</h3>
+            <div id="answer-18" class="faq-answer">
+                <p>While having a vehicle is beneficial, we accept couriers with different types of transportation, including bicycles, motorcycles, and cars, depending on the size and weight of the packages.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(19)">4. How do I track my deliveries?</h3>
+            <div id="answer-19" class="faq-answer">
+                <p>You will be provided with an app that allows you to track your assigned deliveries, view customer details, and manage your routes efficiently.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(20)">5. What should I do if I am unable to complete a delivery?</h3>
+            <div id="answer-20" class="faq-answer">
+                <p>In case of emergencies or if you are unable to complete a delivery, contact our support team immediately to inform them, and we will assist in rescheduling or reassigning the delivery.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(21)">6. How can I contact customer support if I have issues with a delivery?</h3>
+            <div id="answer-21" class="faq-answer">
+                <p>You can contact our support team through the app or by calling our helpline. We are available 24/7 to assist you with any issues.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(22)">7. What happens if a customer is unavailable at the delivery location?</h3>
+            <div id="answer-22" class="faq-answer">
+                <p>If the customer is unavailable, we will attempt to contact them. If we cannot reach them, the package will be returned, and you will be instructed on next steps.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(23)">8. Do I need to provide my own insurance?</h3>
+            <div id="answer-23" class="faq-answer">
+                <p>No, we provide insurance coverage for your deliveries. However, we recommend that you keep your own vehicle insurance up to date.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(24)">9. How do I get paid for my deliveries?</h3>
+            <div id="answer-24" class="faq-answer">
+                <p>Payments are made on a weekly basis through direct deposit or a payment app, depending on your preference.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(25)">10. Can I work part-time as a courier?</h3>
+            <div id="answer-25" class="faq-answer">
+                <p>Yes, you can choose your working hours, making it easy to work part-time or on a flexible schedule.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(26)">11. Are there any additional benefits for couriers?</h3>
+            <div id="answer-26" class="faq-answer">
+                <p>Couriers can earn bonuses for on-time deliveries, good customer feedback, and working during peak times.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(27)">12. What happens if I miss a delivery?</h3>
+            <div id="answer-27" class="faq-answer">
+                <p>If you miss a delivery, contact support immediately. We will attempt to reschedule or assign the delivery to another courier if necessary.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(28)">13. Can I decline a delivery?</h3>
+            <div id="answer-28" class="faq-answer">
+                <p>You can decline a delivery if it is outside your preferred working area or schedule. However, repeated declines may affect your status.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(29)">14. How do I report an accident or damage to the package?</h3>
+            <div id="answer-29" class="faq-answer">
+                <p>If you encounter an accident or package damage, report it immediately to our support team, and we will handle the situation.</p>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h3 onclick="toggleAnswer(30)">15. Can I deliver internationally as a courier?</h3>
+            <div id="answer-30" class="faq-answer">
+                <p>Currently, we only offer domestic deliveries, but we plan to expand our courier services internationally in the future.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>&copy; 2025 Garden Go Auto Courier. All rights reserved.</p>
+</div>
+
+<script>
+    function toggleAnswer(questionId) {
+        var answer = document.getElementById("answer-" + questionId);
+        if (answer.style.display === "none" || answer.style.display === "") {
+            answer.style.display = "block";
+        } else {
+            answer.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>

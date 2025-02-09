@@ -1,0 +1,132 @@
+{% extends 'navbar.html' %}
+
+{% block head %}
+<title>Product Detail</title>
+{% endblock %}
+
+{% block home %}
+<li class="nav-item">
+    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('customert2.product_list') }}">Home</a>
+</li>
+{% endblock %}
+
+{% block sign %}
+<a href="{{ url_for('customert2.view_cart') }}" class="btn btn-success me-4">
+    <i class="fa fa-shopping-cart"></i> Cart
+</a>
+
+{% if user %}
+    <a href="{{ url_for('customert2.order_history') }}" class="btn btn-primary mx-3">View My Orders</a>
+{% endif %}
+
+<span class="me-2" style="color:white; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: large;">
+    Welcome, {{ user.name if user else 'Guest' }}
+</span>
+
+<div class="dropdown">
+    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" style="color:white;" aria-expanded="false">
+        <i class="fa fa-user fa-2x" style="color:white;"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <a href="{{ url_for('customert2.product_list') }}" class="btn btn-secondary mb-4" style="margin-bottom: 20px; background-color: rgb(40, 193, 40); color: white;">Back to products</a>
+    <div class="text-end ">
+        
+      
+</div>
+
+
+
+    <style>
+        .img-fluid:hover {
+            transform: scale(1.05);
+            border-bottom: 2px solid #86d68b;
+            border: 2px solid #86d68b;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-custom {
+            width: 48%;
+        }
+        .btn-add-to-cart {
+            background-color: #FF5733; /* Red/Orange */
+            color: white;
+        }
+        .btn-buy-now {
+            background-color: #28a745; /* Green */
+            color: white;
+        }
+    </style>
+
+<div class="row align-items-center">
+    <div class="col-md-6 col-12 position-relative">
+        <div class="position-relative d-inline-block">
+          
+            <img src="/static/{{ product.image_url }}" class="img-fluid product-image" 
+                 style="height: 450px; width: 500px;" alt="{{ product.name }}">
+
+    
+            <a href="{{ url_for('customert2.direct_add_to_cart',product_id=product.product_id) }}" 
+               class="btn btn-success position-absolute top-0 end-0 m-2">
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+        </div>
+    </div>
+
+
+          
+        <div class="col-md-6 col-12">
+            <h1 style="color: #86d68b; font-weight: 700;">{{ product.name }}</h1>
+            <p><strong>Category:</strong> {{ product.category_name }}</p>
+            <p><strong>Description:</strong> {{ product.description }}</p>
+            <p><strong>Weight:</strong> {{ product.weight }} g</p>
+            <p><strong>Price:</strong> INR {{ product.selling_price }}</p>
+            <p><strong>Stock:</strong> {{ product.stock_quantity }}</p>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('customert2.buy_now', product_id=product.product_id) }}" class="btn btn-custom btn-add-to-cart m-2" style="background-color:rgb(41, 201, 36) ;">Buy Now</a>
+                <a href="{{ url_for('customert2.add_to_cart', product_id=product.product_id) }}" class="btn btn-custom btn-buy-now m-2" style="background-color: #d03333;">Add To Cart</a>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5">Similar Products</h3>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for other_product in other_products %}
+            <div class="col">
+                <a href="{{ url_for('customert2.product_detail', id=other_product.product_id) }}" class="text-decoration-none text-dark">
+                    <div class="card h-100">
+                        <img src="/static/{{ other_product.image_url }}" class="card-img-top" alt="{{ other_product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ other_product.name }}</h5>
+                            <p class="card-text">Category: {{ other_product.category_name }}</p>
+                            <p class="card-text">Price: INR {{ other_product.selling_price }}</p>
+                            <p class="card-text">Description: {{ other_product.description }}</p>
+                            <p class="card-text">Weight: {{ other_product.weight }}g</p>
+                            <a href="{{ url_for('customert2.product_detail', id=other_product.product_id) }}" class="btn btn-secondary mt-2" style="background-color: #39ac39; color: white;">View Details</a>
+
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

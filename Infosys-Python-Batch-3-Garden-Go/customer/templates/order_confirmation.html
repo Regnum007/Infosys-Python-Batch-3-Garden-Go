@@ -1,0 +1,159 @@
+{% extends 'navbar.html' %}
+{% block home %}
+<li class="nav-item">
+    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('customert2.product_list') }}">Home</a>
+</li>
+{% endblock %}
+{% block head %}
+<title>Ordered Products</title>
+{% endblock %}
+
+{% block sign %}
+    <a href="{{ url_for('customert2.view_cart') }}" class="btn btn-success me-4">
+        <i class="fa fa-shopping-cart"></i> Cart
+    </a>
+    {% if user %}
+        <a href="{{ url_for('customert2.order_history') }}" class="btn btn-primary">View My Orders</a>
+    {% endif %}
+    
+    <a href="{{ url_for('customert2.set_location') }}" class="me-4"></a>
+    <span class="me-2" style="color:white;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;font-size: large;">Welcome, {{ user.name if user else 'Guest' }}</span>
+
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-user fa-2x" style="color:white;"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" href="{{url_for('logint1.profile')}}">Update Profile</a></li>
+            <li><a class="dropdown-item" href="{{url_for('logint1.change_password')}}">Change Password</a></li>
+            <li><a class="dropdown-item" href="{{url_for('logint1.address')}}">Address</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{url_for('logint1.logout')}}">Logout</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+<body>
+    {% block body %}
+    <style>
+        .product-image {
+            object-fit: cover;
+            height: 150px;
+            width: 150px;
+            border-radius: 8px;
+        }
+        .confirmation-box {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease-in-out;
+        }
+        .confirmation-box:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .card-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .btn-secondary {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #45a049;
+        }
+        .text-center h1 {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .row {
+            margin-bottom: 10px;
+        }
+        .shipping-address {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.5;
+        }
+        .shipping-address-heading {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+
+    <div class="container mt-5">
+        <div class="confirmation-box">
+            <h1 class="text-center mb-4">Order Confirmation</h1>
+            <p class="lead text-center">{{ message }}</p>
+    
+            <div class="mt-4">
+                <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+                <p><strong>Date:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    
+                <div class="mt-3">
+                    {% for item in ordered_products %}
+                    <div class="card mb-2">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ url_for('static', filename=item.product.image_url) }}" class="img-fluid product-image" alt="{{ item.product.name }}">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <p class="card-title"><strong>Product :</strong> {{ item.product.name }}</p>
+                                    <p class="card-text"><strong>Price:</strong> ₹ {{ item.product.selling_price }}</p>
+                                    <p class="card-text"><strong>Quantity:</strong> {{ item.quantity }}</p>
+                                    <p class="card-text"><strong>Subtotal:</strong> ₹ {{ item.sub_total }}</p>
+                                    <p class="card-text"><strong>Status:</strong> {{ order.status }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <p><strong>Total Weight:</strong> {{ total_weight }}g</p>
+                
+                    {% if confirmed_address %}
+                    <div class="mt-3">
+                        <h3 class="shipping-address-heading">Shipping Address</h3>
+                        <p class="shipping-address">{{ confirmed_address.street_address }}, {{ confirmed_address.locality }}, {{ confirmed_address.city }}, {{ confirmed_address.state }} - {{ confirmed_address.postal_code }}</p>
+                    </div>
+                    {% else %}
+                    <p class="shipping-address">No confirmed address found. Please add an address.</p>
+                    {% endif %}
+
+                    <p><strong>Shipping Cost:</strong> ₹ {{ shipping_cost }}</p>
+                    <p><strong>Total Price:</strong> ₹ {{ order.total_price }}</p>
+                    <h1 class="text-center">Grand Total: ₹ {{ grand_total }}</h1>
+                </div>
+                <div class="mt-4">
+                    <p class="mt-4 text-center">Thank you for your purchase!</p>
+                    <div class="text-center">
+                        <a href="{{ url_for('customert2.product_list') }}" class="btn btn-secondary mt-3">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% endblock %}
+</body>
+</html>

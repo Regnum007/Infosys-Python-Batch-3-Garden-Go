@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANALYTICS DASHBOARD</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: rgb(0, 0, 0);
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            gap: 10px;
+        }
+        nav button {
+            background-color: #e0f0e0;
+            color: #000000;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .nav button:hover {
+            background-color: #575757;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100vh - 60px);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ANALYTICS DASHBOARD</h1>
+        <nav>
+            <button onclick="loadPage('sales_graph_from_database.html')">SALES DASHBOARD</button>
+            <button onclick="loadPage('delivery_dashboard.html')">DELIVERY DASHBOARD</button>
+            <button onclick="loadPage('regional_popular_products.html')">POPULAR PRODUCTS/button>
+            <a class="nav-link" style="font-size: 20px;" href="{{ url_for('analystt4.analyticsindex') }}">Analytics Dashboard</a>
+        </nav>
+    </header>
+    <iframe id="content-frame" src="sales_graph_from_database.html"></iframe>
+    <script>
+        function loadPage(page) {
+            document.getElementById('content-frame').src = page;
+        }
+    </script>
+</body>
+</html>

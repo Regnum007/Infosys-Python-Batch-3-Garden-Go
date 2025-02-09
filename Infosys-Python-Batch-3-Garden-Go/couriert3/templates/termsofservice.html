@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vmcss.css') }}">
+{% endblock %}
+{% block body %}
+<main class="content">
+    <h1>Terms of Service</h1>
+    <p>Last updated: January 1, 2024</p>
+    <section>
+        <h2>Introduction</h2>
+        <p>Welcome to Garden Go. These Terms of Service govern your use of our services...</p>
+    </section>
+    <section>
+        <h2>Your Obligations</h2>
+        <p>By using our services, you agree to...</p>
+    </section>
+</main>
+<button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/vmjs.js') }}"></script>
+{% endblock %}

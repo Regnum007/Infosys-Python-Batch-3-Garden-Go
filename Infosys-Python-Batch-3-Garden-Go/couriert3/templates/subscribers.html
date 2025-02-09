@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/subscribers.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1>Subscribers List</h1>
+    <form id="subscribe-form" action="/subscribe" method="POST" class="mb-4 d-flex justify-content-center">
+        <div class="input-group" style="max-width: 500px;">
+            <input type="email" name="email" placeholder="Enter your email" class="form-control" required>
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Date Subscribed</th>
+                </tr>
+            </thead>
+            <tbody id="subscribers-table-body">
+                {% for subscriber in subscribers %}
+                <tr>
+                    <td>{{ subscriber.id }}</td>
+                    <td>{{ subscriber.email }}</td>
+                    <td>{{ subscriber.date_created }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if user and (user.role == 'Admin' or user.role == 'Courier') %}
+    <h2>Real-Time Analytics</h2>
+    <div class="d-flex justify-content-center">
+        <img src="/analytics" alt="Subscription Analytics Graph" class="img-fluid mt-4">
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/subscribers.js') }}"></script>
+{% endblock %}

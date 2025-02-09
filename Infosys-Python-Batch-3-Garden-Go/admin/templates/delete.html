@@ -1,0 +1,68 @@
+{% extends 'navbar.html' %}
+{% block head %}
+<title>Admin Delete product</title>
+{% endblock %}
+
+{% block home %}
+<li class="nav-item">
+    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Home</a>
+</li>
+{% endblock %}
+{% block search %}
+<form class="d-flex me-3" action="{{ url_for('admint2.edit_product') }}" method="get">
+    <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
+    <button class="btn btn-light search-btn" type="submit"><i class="fas fa-search"></i></button>
+</form>
+{% endblock %}
+{% block part %}
+<span class="me-2" style="color: white;font-size: 17px; font-weight: 700;">
+    Welcome, {{ user.name if user else admin.name if admin else 'Admin' }}
+</span>
+<div class="dropdown">
+    <a href="#" style="color: white;" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-user fa-2x"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+    </ul>
+</div>
+{% endblock %}
+<body>
+    {% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Delete Products</h1>
+        <a href="{{ url_for('admint2.edit_product') }}" class="btn btn-primary btn-lg m-3">BACK TO ADMIN MODE</a>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="{{ url_for('static',filename=product.image_url) }}" height="300" width="300" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">Category: {{ product.category_name }}</p>
+                        <p class="card-text">Description:{{ product.description }}</p>
+                        <p class="card-text">Weight: {{ product.weight }}</p>
+                        <p class="card-text">Cost Price: {{ product.cost_price }}</p>
+                        <p class="card-text">Selling Price: {{ product.selling_price }}</p>
+                        <p class="card-text">stock : {{product.stock_quantity}}</p>
+
+
+
+                        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                            <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

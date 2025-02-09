@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Activation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+        <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+            <div class="form-container border rounded p-4 bg-light shadow" style="width: 100%; max-width: 400px;">
+    <div class="container mt-5">
+        <h2 class="text-danger">Account Deactivated</h2>
+        <p class="text-warning">
+            Your account has been deactivated. This may be due to your own request or by an admin.
+            To regain access, please request reactivation.
+        </p>
+
+        {% if request_exists %}
+        <!-- Feedback Message if Request Already Exists -->
+        <div class="alert alert-info mt-4">
+            Your reactivation request has already been submitted. Please allow 2-3 working days for an admin to process your request.
+        </div>
+        {% else %}
+        <!-- Reactivation Button -->
+        <button id="requestReactivationBtn" class="btn btn-primary">Request Reactivation</button>
+
+        <!-- Reactivation Request Form -->
+        <form id="reactivationForm" class="hidden mt-4" action="/reactivation" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-success mb-3">Submit Request</button>
+
+        </form>
+        <button onclick="window.location.href='{{url_for('logint1.index')}}'" class="btn btn-success">Back</button>
+        <!-- Feedback Message -->
+        <div id="feedbackMessage" class="hidden alert alert-info mt-4">
+            Your reactivation request has been submitted. Please allow 2-3 working days for an admin to process your request.
+        </div>
+        {% endif %}
+    </div>
+            </div>
+        </div>
+
+
+    <script>
+        document.getElementById('requestReactivationBtn')?.addEventListener('click', function () {
+            document.getElementById('requestReactivationBtn').classList.add('hidden');
+            document.getElementById('reactivationForm').classList.remove('hidden');
+        });
+
+        document.getElementById('reactivationForm')?.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Gather form data
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Send POST request to the server
+                const response = await fetch('/reactivation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    // On success, show feedback message
+                    document.getElementById('reactivationForm').classList.add('hidden');
+                    document.getElementById('feedbackMessage').classList.remove('hidden');
+                } else {
+                    alert('Failed to submit request. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting reactivation request:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

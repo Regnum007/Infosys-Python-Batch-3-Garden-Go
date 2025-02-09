@@ -1,0 +1,96 @@
+{% extends 'navbar.html' %}
+{% block head %}
+<title>Admin Add product</title>
+{% endblock %}
+
+{% block home %}
+<li class="nav-item">
+    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Home</a>
+</li>
+{% endblock %}
+{% block search %}
+<form class="d-flex me-3" action="{{ url_for('admint2.edit_product') }}" method="get">
+    <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
+    <button class="btn btn-light search-btn" type="submit"><i class="fas fa-search"></i></button>
+</form>
+{% endblock %}
+
+{% block part %}
+<span class="me-2" style="color: white;font-size: 17px; font-weight: 700;">
+    Welcome, {{ user.name if user else admin.name if admin else 'Admin' }}
+</span>
+<div class="dropdown">
+    <a href="#" style="color: white;" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-user fa-2x"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+<body>
+    {% block body %}
+    <div class="container my-5">
+        <h1>Add Product</h1>
+        <a href="{{ url_for('admint2.edit_product') }}" class="btn btn-primary btn-lg m-3">BACK TO ADMIN MODE</a>
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('admint2.add_product') }}">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Product Name:</label>
+                    <input type="text" name="name" id="name" class="form-control" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="category_name" class="form-label">Category:</label>
+                    <input type="text" name="category_name" id="category_name" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea name="description" id="description" class="form-control" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="image_url" class="form-label">Image URL:</label>
+                <input type="url" name="image_url" id="image_url" class="form-control" placeholder="http://example.com/image.jpg">
+            </div>
+
+            <div class="mb-3">
+                <label for="image_file" class="form-label">Upload Image:</label>
+                <input type="file" name="image_file" id="image_file" class="form-control" accept="image/*">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="weight" class="form-label">Weight:</label>
+                    <input type="text" name="weight" id="weight" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="cost_price" class="form-label"> cost Price:</label>
+                    <input type="number" step="0.01" name="cost_price" id="cost_price" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="selling_price" class="form-label">Selling Price:</label>
+                    <input type="number" step="0.01" name="selling_price" id="selling_price" class="form-control" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="stock_quantity" class="form-label">stock : </label>
+                    <input type="number"  name="stock_quantity" id="stock_quantity" class="form-control" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+    </div>
+    {% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

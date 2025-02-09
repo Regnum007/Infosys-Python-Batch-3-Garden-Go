@@ -1,0 +1,137 @@
+{% extends 'navbar.html' %}
+{% block head %}
+<title>Admin Edit</title>
+{% endblock %}
+{% block home %}
+<li>
+<a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.edit_product') }}">Home</a></li>
+{% endblock %}
+{% block category %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="font-size: 20px;" aria-expanded="false">Category</a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        
+            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Seeds') }}" onclick="showContainer();">Seeds</a>
+        </li>
+        <li>
+            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Plants') }}" onclick="showContainer();">Plants</a>
+        </li>
+        <li>
+            <a class="dropdown-item" style="color:#41d74b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Wild edible plants') }}" onclick="showContainer();">Wild Edible Plants</a>
+        </li>
+    </ul>
+</li>
+{% endblock %}
+{% block search %}
+<form class="d-flex me-3" action="{{ url_for('admint2.edit_product') }}" method="get">
+    <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
+    <button class="btn btn-light search-btn" type="submit"><i class="fas fa-search"></i></button>
+</form>
+{% endblock %}
+{% block part %}
+<span class="me-2" style="color: white;font-size: 17px; font-weight: 700;">
+    Welcome, {{ user.name if user else admin.name if admin else 'Admin' }}
+</span>
+<div class="dropdown" >
+    <a href="#" style="color: white;" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-user fa-2x" ></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+    </ul>
+</div>
+
+<style>
+    .btn-sort { background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    .btn-sort:hover { background-color: #45a049; }
+</style>
+
+
+{% endblock %}
+{% block body %}
+<div class="container my-5">
+    <!-- Sort Button -->
+    <div class="text-end mb-3">
+        <button class="btn-sort" data-bs-toggle="modal" data-bs-target="#sortModal">
+            <i class="fas fa-filter"></i> Sort Products
+        </button>
+    </div>
+
+    <!-- Sort Modal -->
+    <div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sortModalLabel">Sort Products</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="GET" action="{{ url_for('admint2.edit_product') }}">
+                        <input type="hidden" name="query" value="{{ request.args.get('query', '') }}">
+                        <div class="mb-3">
+                            <label for="sort" class="form-label">Sort By:</label>
+                            <select name="sort" id="sort" class="form-select">
+                                <option value="default" {% if sort == "default" %}selected{% endif %}>Default</option>
+                                <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>Price: Low to High</option>
+                                <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Price: High to Low</option>
+                                <option value="weight_asc" {% if sort == "weight_asc" %}selected{% endif %}>Weight: Low to High</option>
+                                <option value="weight_desc" {% if sort == "weight_desc" %}selected{% endif %}>Weight: High to Low</option>
+                                <option value="name_asc" {% if sort == "name_asc" %}selected{% endif %}>Name: A to Z</option>
+                                <option value="name_desc" {% if sort == "name_desc" %}selected{% endif %}>Name: Z to A</option>
+                            </select>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<a class="nav-link" style="font-size: 20px;" href="{{ url_for('admint2.admin_home') }}">Admin Dashboard</a>
+<!-- Edit Products Section -->
+<div class="edit-buttons-container text-center my-4">
+    <a href="{{ url_for('admint2.add_product') }}" class="btn btn-primary m-2">Add Product</a>
+    <a href="{{ url_for('admint2.delete_products') }}" class="btn btn-danger m-2">Delete Product</a>
+    <a href="{{ url_for('admint2.recovery_products') }}" class="btn btn-warning m-2">Recover Deleted Products</a>
+    <a href="{{ url_for('admint2.modify_products') }}" class="btn btn-secondary m-2">Modify Product</a>
+    <a href="{{ url_for('admint2.admin_home') }}" class="btn btn-info m-2">Admin Dashboard</a>
+</div>
+
+<!-- Product List Section -->
+<div class="container my-5">
+    <h2 class="our-products-heading">Our Products</h2>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for product in products %}
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">Category: {{ product.category_name }}</p>
+                        <p class="card-text">Weight: {{ product.weight }} g</p>
+                        <p class="card-text">Description: {{ product.description }}</p>
+                        <p class="card-text">Cost Price: INR {{ product.cost_price }}</p>
+                        <p class="card-text">Selling Price: INR {{ product.selling_price }}</p>
+                        <p class="card-text">Quantity: {{ product.stock_quantity }}</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col text-center">
+                <p class="text-center">No products found.</p>
+            </div>
+        {% endfor %}
+        
+    </div>
+</div>
+{% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

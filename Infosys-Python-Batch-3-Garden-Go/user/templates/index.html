@@ -1,0 +1,95 @@
+<style>
+.video-banner {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    position: relative;
+}
+</style>
+{% extends 'navbar.html' %}
+{% block category %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" style="font-size: 20px;" aria-expanded="false">Category</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" style="color:#86d68b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Seeds') }}">Seeds</a></li>
+                        <li><a class="dropdown-item" style="color:#86d68b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Plants') }}">Plants</a></li>
+                        <li><a class="dropdown-item" style="color:#86d68b ; font-weight: 700;" href="{{ url_for('customert2.filter_category', category='Wild edible plants') }}">Wild Edible Plants</a></li>
+                    </ul>
+                </li>{% endblock %}
+                {% block search %}
+            <form class="d-flex me-3" action="{{ url_for('logint1.index') }}" method="get">
+                <input class="form-control search-bar me-2" type="search" name="query" placeholder="Search">
+                <button class="btn btn-light search-btn" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            {% endblock %}
+{% block sign %}
+<a href="{{ url_for('logint1.login') }}" class="btn btn-outline-light me-2">Login</a>
+            <a href="{{ url_for('logint1.signup') }}" class="btn btn-outline-light">Signup</a> 
+            <span class="me-2 mx-2" style="color:white; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: large;">
+                Welcome, {{ user.name if user else 'Guest' }}
+            </span>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" style="color:white;" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-user fa-2x" style="color:white;"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+                </ul>
+            </div> 
+{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <!-- Video Banner -->
+    <div class="video-container mb-4">
+        <video class="video-banner" autoplay loop muted>
+            <source src="{{ url_for('static', filename='videos/banner.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+<div class="container my-5">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        
+        {% for product in products %}
+            <div class="col">
+                
+                <a href="{{ url_for('logint1.indexproduct', id=product.product_id) }}" class="text-decoration-none text-dark">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename=product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">Category: {{ product.category_name }}</p>
+
+                            <p class="card-text">Description: {{ product.description }}</p>
+                            <p class="card-text">Weight: {{ product.weight }} g</p>
+                            <p class="card-text">Price: INR {{ product.selling_price }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% else %}
+            <p class="text-center">No products found.</p>
+        {% endfor %}
+    </div>
+</div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 bg-dark text-white mt-5">
+        <p>&copy; 2024 Web App. All Rights Reserved.</p>
+        <a href="{{ url_for('logint1.about') }}" class="footer-btn mt-3">About Us</a>
+        <a href="{{ url_for('customert2.faqs') }}" class="footer-btn mt-3">FAQs</a>
+    </footer>
+{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    
+    
+    
+</body>
+</html>

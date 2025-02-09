@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h4 {
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 15px 20px;
+            display: block;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+
+        /* Alert Styling */
+        .alert {
+            padding: 10px;
+            margin: 20px 20px 0;
+            border: 1px solid transparent;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert .closebtn {
+            margin-left: 15px;
+            color: #aaa;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .alert .closebtn:hover {
+            color: black;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            font-weight: bold;
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .card-body {
+            font-size: 14px;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9fafb;
+        }
+
+        .table-striped tbody tr:hover {
+            background-color: #eef1f5;
+        }
+
+        .stats-card {
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h4 class="text-center">Admin Dashboard</h4>
+        <a href="{{ url_for('logint1.about') }}">About</a>
+        <a href="{{ url_for('admint2.admin_home') }}" >Dashboard</a>
+        <a href="{{ url_for('couriert3.home') }}">Courier Dashboard</a>
+        <a href="{{ url_for('admint2.manage_users') }}" class="active" >Manage Users</a>
+        <a href="{{ url_for('admint2.edit_product') }}">Manage the Products</a>
+        <a href="{{ url_for('analystt4.analyticsindex') }}">View Analytics</a>
+        <a href="{{ url_for('logint1.logout') }}">Logout</a>
+    </div>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+            <div class="container mt-5">
+                <button class="btn btn-primary mb-4" onclick="window.location.href = '{{url_for('admint2.manage_users')}}';">Back</button>
+
+        <h2 class="text-center">Reactivation Requests</h2>
+        <p class="text-muted text-center">Approve or reject account reactivation requests from users.</p>
+
+        {% if requests %}
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Request Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.user_id }}</td>
+                    <td>{{ req.name }}</td>
+                    <td>{{ req.email }}</td>
+                    <td>{{ req.last_login.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admint2.approve_request', user_id=req.user_id) }}" class="d-inline" onsubmit=" return confirm('Are you sure you want to approve this request?')">
+                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admint2.reject_request', user_id=req.user_id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to reject this request?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info mt-4 text-center">
+            <strong>No reactivation requests found.</strong>
+        </div>
+        {% endif %}
+    </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

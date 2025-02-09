@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #212529;
+            color: #fff;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h4 {
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 15px 20px;
+            display: block;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            font-weight: bold;
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .card-body {
+            font-size: 14px;
+        }
+                /* Alert Styling */
+        .alert {
+            padding: 10px;
+            margin: 20px 20px 0;
+            border: 1px solid transparent;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert .closebtn {
+            margin-left: 15px;
+            color: #aaa;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+        }
+
+        .alert .closebtn:hover {
+            color: black;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9fafb;
+        }
+
+        .table-striped tbody tr:hover {
+            background-color: #eef1f5;
+        }
+
+        .stats-card {
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h4 class="text-center">Admin Dashboard</h4>
+        <a href="{{ url_for('logint1.about') }}">About</a>
+        <a href="{{ url_for('admint2.admin_home') }}" class="active">Dashboard</a>
+        <a href="{{ url_for('couriert3.home') }}">Courier Dashboard</a>
+        <a href="{{ url_for('admint2.manage_users') }}" >Manage Users</a>
+        <a href="{{ url_for('admint2.edit_product') }}">Manage the Products</a>
+        <a href="{{ url_for('analystt4.analyticsindex') }}">View Analytics</a>
+        <a href="{{ url_for('logint1.logout') }}">Logout</a>
+    </div>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+        <div class="container-fluid">
+            <h1 class="mb-4">Welcome, Admin</h1>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white stats-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <h3 id="total-user"></h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white stats-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Active Sessions</h5>
+                            <h3 id="session-count">{{active_sessions}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white stats-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Reactivation Requests</h5>
+                            <h3 id="reactivation-count"></h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <hr>
+        <div id="user-plot"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function fetchActiveSessions() {
+            fetch('/admin/admin_stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('session-count').innerText = data.active_sessions;
+                    document.getElementById('total-user').innerText = data.total_users;
+                    document.getElementById('reactivation-count').innerText = data.reactivation_count;
+                })
+                .catch(error => console.error('Error fetching session stats:', error));
+        }
+        setInterval(fetchActiveSessions, 10000);
+        fetchActiveSessions();
+
+        function fetchUserPlot() {
+            fetch('/admin/user_plot')
+                .then(response => response.json())
+                .then(data => {
+                    const plotDiv = document.getElementById('user-plot');
+                    plotDiv.innerHTML = "";
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data.plot_html;
+                    const scriptTags = tempDiv.querySelectorAll('script');
+                    plotDiv.appendChild(tempDiv.firstChild);
+
+                    scriptTags.forEach(script => {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                        document.body.removeChild(newScript);
+                    });
+                })
+                .catch(error => console.error('Error fetching session stats:', error));
+        }
+        setInterval(fetchUserPlot, 300000);
+        fetchUserPlot();
+    </script>
+</body>
+
+</html>

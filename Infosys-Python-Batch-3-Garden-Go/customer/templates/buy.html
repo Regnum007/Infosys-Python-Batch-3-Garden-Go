@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>Customer</title>
+   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+   
+    <style>
+        
+        .navbar-custom {
+            background: linear-gradient(90deg, #5adb5a, #05994d);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            background-color: white; /* White background */
+            padding: 5px; /* Padding around the logo */
+            border-radius: 15px; /* Rounded corners for smooth effect */
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+        .nav-link {
+            color: white !important;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #d4f4e0 !important;
+        }
+        .navbar-toggler-icon {
+            background-color: white;
+        }
+        .search-bar {
+            border-radius: 20px;
+            border: 1px solid white;
+            padding-left: 10px;
+        }
+        .search-bar::placeholder {
+            color:#86d68b;
+            font-size: 14px;
+        }
+        .search-btn {
+            border-radius: 20px;
+        }
+
+        
+    </style>
+
+   
+<nav class="navbar navbar-expand-lg navbar-custom py-2">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="{{url_for('static', filename='images/logo.png')}}" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+               
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-size: 20px;" href="{{ url_for('customert2.product_list') }}">Products</a>
+                    </li>
+                 
+            
+                <li class="nav-item">
+                    <a class="nav-link" style="font-size: 20px;" href="{{ url_for('logint1.about') }}">About</a>
+                </li>
+           
+            </ul>
+            
+            <form class="d-flex align-items-center me-3" action="{{ url_for('customert2.product_list') }}" method="get" style="max-width: 400px; width: 100%;">
+                <input 
+                    class="form-control search-bar me-2" 
+                    type="search" 
+                    name="query" 
+                    placeholder="Search for products..." 
+                    style="border-radius: 20px; padding: 10px; border: 2px solid #37bd49,#001000; background-color: #e7f0e9; color: rgb(25, 178, 25); outline: none; transition: box-shadow 0.3s;"
+                >
+                <button 
+                    class="btn btn-primary search-btn" 
+                    type="submit" 
+                    style="border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background-color: #f6fbf7;"
+                >
+                    <i class="fas fa-search" style="color: rgb(23, 197, 23);"></i> <!-- Search icon color set to white -->
+                </button>
+            </form>
+            <a href="{{ url_for('couriert3.track_order') }}" class="btn btn-primary me-4" style="color: white; padding: 2px; margin: 8px;"><i class="fas fa-shipping-fast text-white"></i>
+                Track Order</a></li>
+            <span class="me-2 mx-3" style="color:white; font-size: large;">
+                Welcome, {{ user.name if user else 'Guest' }}
+            </span>
+            {% if user %}
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color:white; font-size: large;">
+                    <i class="fa fa-user fa-2x" style="color:white;"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.profile') }}">Update Profile</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.change_password') }}">Change Password</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.address') }}">Address</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ url_for('logint1.logout') }}">Logout</a></li>
+                </ul>
+            </div>
+            {% endif %}
+         
+        </div>
+    </div>
+</nav>
+    <style>
+        /* Popup Overlay Styles */
+        .popup-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .popup-close {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Buy Now </h1>
+        <a class="btn btn-primary mb-4" href="{{ url_for('customert2.product_list') }}">Back to Products</a>
+
+        {% if buy %}
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        {% for item in buy %}
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <img src="/static/{{ item.product.image_url }}" alt="{{ item.product.name }}" class="img-fluid">
+                            </div>
+                            <div class="col-8">
+                                <h5>{{ item.product.name }}</h5>
+                                <p><strong>Price:</strong> INR {{ item.product.selling_price }}</p>
+                                <p><strong>Weight:</strong> {{ item.product.weight }}g</p>
+                                <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                                <p><strong>Total:</strong> INR {{ item.product.selling_price * item.quantity }}</p>
+
+                                <div class="d-flex">
+                                    <form action="{{ url_for('customert2.decrement_quantitybuy', product_id=item.product.product_id) }}" method="POST">
+                                        <button type="submit" class="btn btn-warning btn-sm me-2">-</button>
+                                    </form>
+                                    <form action="{{ url_for('customert2.increment_quantitybuy', product_id=item.product.product_id) }}" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm me-2">+</button>
+                                    </form>
+                                    <form action="{{ url_for('customert2.remove_from_buy', product_id=item.product.product_id) }}" method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Product Summary</h5>
+                        <p><strong>Total Weight:</strong> {{ total_weight }}g</p>
+                        <p><strong>Grand Total:</strong> INR <span id="grandTotal"></span></p>
+                        <p id="shippingCost" style="display: none;"><strong>Shipping:</strong> INR 0</p>
+
+                        <h6 class="mt-3">Select Shipping Address</h6>
+
+                        <!-- Display the default address if available -->
+                        {% if default_address %}
+                            <p><strong>Default Address:</strong> {{ default_address.street_address }}, {{ default_address.locality }}, {{ default_address.city }}, {{ default_address.state }} - {{ default_address.postal_code }}</p>
+                            <p id="selectedAddress" class="mt-3 text-muted">Selected Address: Default Address</p>
+                            <input type="hidden" id="selectedAddressId" value="{{ default_address.id }}">
+                        {% else %}
+                            <p id="selectedAddress" class="mt-3 text-muted">Selected Address: None</p>
+                            <input type="hidden" id="selectedAddressId" value="">
+                        {% endif %}
+
+                        <!-- Dropdown for selecting additional addresses -->
+                        <div class="dropdown mb-3">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="addressDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Shipping Address
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="addressDropdownBtn">
+                                {% if all_addresses %}
+                                    {% for address in all_addresses %}
+                                    <li><a class="dropdown-item" href="#" onclick="selectAddress(event, '{{ address.id }}', '{{ address.street_address }}', '{{ address.locality }}', '{{ address.city }}', '{{ address.state }}', '{{ address.postal_code }}')">
+                                        {{ address.street_address }}, {{ address.locality }}, {{ address.city }}, {{ address.state }} - {{ address.postal_code }}
+                                    </a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li><a class="dropdown-item" href="#">No saved addresses found. Please add one.</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-4">
+                        <!-- Confirm Shipping Address Button -->
+                        <button class="btn btn-success" id="confirmAddressButton" onclick="confirmAddress()">Confirm Shipping Address</button>
+
+                        <form action="{{ url_for('customert2.buy_now_from_buy') }}" method="POST" id="checkoutForm">
+                            <input type="hidden" name="shippingCost" id="hiddenShippingCost">
+                            <input type="hidden" name="address_id" id="hiddenAddressId">
+                            <input type="hidden" name="grandTotal" id="hiddenGrandTotal">
+                            <button type="submit" class="btn btn-primary" id="checkoutButton" disabled>Proceed to Checkout</button>
+                        </form>
+                    </div>
+
+                    <button class="btn btn-add-address btn-primary mt-3" onclick="openAddressPopup()">+ Add New Address</button>
+
+                    <!-- Address Form Popup -->
+                    <div class="popup-overlay" id="addressPopup">
+                        <div class="popup-content">
+                            <div class="popup-header">
+                                <button class="popup-close" onclick="closeAddressPopup()">&times;</button>
+                                <!-- Back Button -->
+                                <button class="btn btn-secondary" onclick="closeAddressPopup()">Back</button>
+                            </div>
+                            <form action="{{ url_for('customert2.add_shipping_address') }}" method="POST" class="mt-3">
+                                <input type="hidden" name="next_url" value="{{ url_for('customert2.buy_cart') }}">
+   
+                                <div class="mb-3">
+                                    <label for="street_address" class="form-label">Street Address</label>
+                                    <input type="text" class="form-control" id="street_address" name="street_address" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="locality" class="form-label">Locality</label>
+                                    <input type="text" class="form-control" id="locality" name="locality" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="state" class="form-label">State</label>
+                                    <input type="text" class="form-control" id="state" name="state" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="postal_code" class="form-label">Postal Code</label>
+                                    <input type="number" class="form-control" id="postal_code" name="postal_code" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="default_address" class="form-check-label">
+                                        <input type="checkbox" id="default_address" name="default_address" class="form-check-input">
+                                        Set as Default Address
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-success">Save Address</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="my-5 text-center">
+            <img src="/static\emptycart.png" alt="Empty Cart" class="img-fluid" style="max-width: 200px; margin-bottom: 20px;">
+            <p class="text-muted">Your cart is empty.</p>
+            <a href="{{ url_for('customert2.product_list') }}" class="btn btn-primary btn-lg">
+              <i class="fas fa-shopping-bag"></i> Continue Shopping
+            </a>
+          </div>
+          
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const calculate_states = [
+            { state: "delhi", postal_code: "110001" },
+            { state: "New York", postal_code: "10001" }
+        ];
+    
+        let currentSelectedAddress = null;
+    
+       
+        function openAddressPopup() {
+            document.getElementById('addressPopup').style.display = 'flex';
+        }
+    
+     
+        function closeAddressPopup() {
+            document.getElementById('addressPopup').style.display = 'none';
+        }
+    
+       
+        function selectAddress(event, id, street, locality, city, state, postal_code) {
+            event.preventDefault();
+            currentSelectedAddress = { id, street, locality, city, state, postal_code };
+            const addressDisplay = document.getElementById("selectedAddress");
+            addressDisplay.innerHTML = `<strong>Selected Address:</strong> ${street}, ${locality}, ${city}, ${state} - ${postal_code}`;
+            document.getElementById("selectedAddressId").value = id;
+        }
+    
+        
+        function confirmAddress() {
+            if (currentSelectedAddress) {
+                let shipping_cost = 29; 
+                const state = currentSelectedAddress.state.toLowerCase();
+                const postal_code = currentSelectedAddress.postal_code.trim();
+                
+                const totalWeight = {{ total_weight }}; 
+                let totalProductPrice = 0;
+                
+             
+                {% for item in buy %}
+                    totalProductPrice += {{ item.product.selling_price }} * {{ item.quantity }};
+                {% endfor %}
+    
+               
+                if (totalWeight >= 800) {
+                    shipping_cost = 35; 
+                }
+    
+                calculate_states.forEach(function(item) {
+                    if (item.state.toLowerCase() === state && item.postal_code === postal_code && totalWeight <= 800) {
+                        shipping_cost = 0;
+                    }
+                });
+    
+         
+                const grandTotal = totalProductPrice + shipping_cost;
+    
+               
+                document.getElementById("shippingCost").innerHTML = `<strong>Shipping:</strong> INR ${shipping_cost}`;
+                document.getElementById("shippingCost").style.display = "block";
+                document.getElementById("grandTotal").innerText = grandTotal;
+    
+                
+                document.getElementById("hiddenShippingCost").value = shipping_cost;
+                document.getElementById("hiddenGrandTotal").value = grandTotal;
+                document.getElementById("hiddenAddressId").value = currentSelectedAddress.id;
+    
+               
+                document.getElementById("checkoutButton").disabled = false;
+            } else {
+                alert("Please select an address first.");
+            }
+        }
+    
+      
+        window.onload = function() {
+            {% if default_address %}
+                selectAddress(event, "{{ default_address.id }}", "{{ default_address.street_address }}", "{{ default_address.locality }}", "{{ default_address.city }}", "{{ default_address.state }}", "{{ default_address.postal_code }}");
+            {% endif %}
+        };
+    </script>
+    
+</body>
+</html>

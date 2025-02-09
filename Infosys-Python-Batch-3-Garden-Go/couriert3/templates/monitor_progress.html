@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/m_p.css') }}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+{% endblock %}
+{% block body %}
+
+
+<div class="container">
+    <h1>Monitor Courier Progress</h1>
+
+    <div class="tile-container">
+        <div class="tile">
+            <div class="icon">
+                <i class="fas fa-box" style="color: #2f80ed;"></i> <!-- Blue color for Total Deliveries -->
+            </div>
+            <h3>Total Deliveries</h3>
+            <p>{{ total_deliveries }}</p>
+        </div>
+        <div class="tile">
+            <div class="icon">
+                <i class="fas fa-check-circle" style="color: #27ae60;"></i> <!-- Green color for Delivered Orders -->
+            </div>
+            <h3>Delivered Orders</h3>
+            <p>{{ delivered_orders_count }}</p>
+        </div>
+        <div class="tile">
+            <div class="icon">
+                <i class="fas fa-clock" style="color: #e74c3c;"></i> <!-- Red color for Pending Orders -->
+            </div>
+            <h3>Pending Orders</h3>
+            <p>{{ pending_orders }}</p>
+        </div>
+        <div class="tile">
+            <div class="icon">
+                <i class="fas fa-truck-moving" style="color: #000000;"></i> <!-- Black color for In Transit -->
+            </div>
+            <h3>In Transit</h3>
+            <p>{{ in_transit_orders }}</p>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Deliveries Over Time</h2>
+        <div>{{ line_chart_html | safe }}</div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Delivery Status Distribution</h2>
+        <div>{{ bar_chart_html | safe }}</div>
+    </div>
+
+    <h2 class="container text-center p-3 my-4 rounded"
+        style="background-color: #eafaf1; color: #2d6a4f; border: 2px solid #b8dfc8; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        Recently Delivered Orders
+    </h2>
+
+    <div class="container mt-4">
+        {% if delivered_orders_list %}
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Sr No</th>
+                    <th>Order ID</th>
+                    <th>Courier Name</th>
+                    <th>Status</th>
+                    <th>Date Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in delivered_orders_list %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ order.orderid }}</td>
+                    <td>{{ order.courier_name }}</td>
+                    <td>
+                        <span class="status-badge status-delivered">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td>{{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            No recently delivered orders available.
+        </div>
+        {% endif %}
+    </div>
+
+    <a href="/">Back to Form</a>
+</div>
+
+{% endblock %}
