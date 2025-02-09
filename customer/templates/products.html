@@ -71,42 +71,31 @@
         position: relative;
     }
 </style>
+<!-- Sort and Subscribe buttons -->  
+<div class="d-flex justify-content-between my-3">  
+    <div>  
+        <button class="btn-sort" data-bs-toggle="modal" data-bs-target="#sortModal">  
+            <i class="fas fa-filter"></i> Sort Products  
+        </button>  
+    </div>  
 
-<div class="container my-5">
-    <!-- Video Banner -->
-    <div class="video-container mb-4">
-        <video class="video-banner" autoplay loop muted>
-            <source src="{{ url_for('static', filename='videos/banner.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-
-    <!-- Buttons (Sort on left, Subscribe on right) -->
-    <div class="d-flex justify-content-between mb-3">
-        <!-- Sort Button on Left -->
-        <div>
-            <button class="btn-sort" data-bs-toggle="modal" data-bs-target="#sortModal">
-                <i class="fas fa-filter"></i> Sort Products
-            </button>
-        </div>
-
-        <!-- Subscribe Button on Right -->
-        <div>
-            <form action="{{ url_for('customert2.subscribe') }}" method="post" style="display: inline;">
-                <button 
-                    type="submit" 
-                    class="btn {% if subscribed %}btn-unsubscribe{% else %}btn-subscribe{% endif %}">
-                    {% if subscribed %}
-                        <i class="fas fa-bell-slash"></i>
-                        Unsubscribe
-                    {% else %}
-                        <i class="fas fa-bell"></i>
-                        Subscribe
-                    {% endif %}
-                </button>
-            </form>
-        </div>
-    </div>
+    <!-- Subscribe Button -->  
+    <div>  
+        <form action="{{ url_for('customert2.subscribe') }}" method="post" style="display: inline;">  
+            <button   
+                type="submit"   
+                class="btn {% if subscribed %}btn-unsubscribe{% else %}btn-subscribe{% endif %}">  
+                {% if subscribed %}  
+                    <i class="fas fa-bell-slash"></i>  
+                    Unsubscribe  
+                {% else %}  
+                    <i class="fas fa-bell"></i>  
+                    Subscribe  
+                {% endif %}  
+            </button>  
+        </form>  
+    </div>  
+</div>
 
     <style>
         /* General button styles */
@@ -174,7 +163,7 @@
 
     <!-- Product List -->
     <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% for product in products %}
+        {% for product in products [:4]%}
         <div class="col">
             <a href="{{ url_for('customert2.product_detail', id=product.product_id) }}" class="text-decoration-none text-dark">
                 <div class="card h-100">
