@@ -450,8 +450,12 @@ def monitor_progress():
 
     
     status_count = {status: 0 for status in ['Dispatched', 'Out for Delivery', 'Delivered', 'Failed Attempt', 'In Transit']}
+
     for c in couriers:
-        status_count[c.status.capitalize()] += 1
+        normalized_status = c.status.strip().title()  # Ensures correct casing
+        if normalized_status in status_count:  # Avoid KeyError
+            status_count[normalized_status] += 1
+
 
 
     bar_fig = px.bar(

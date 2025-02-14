@@ -273,27 +273,31 @@ def get_region(postal_code):
 def regional_popular_products():
     region_products = {region: [] for region in REGIONS.keys()}
 
-    # Get user regions
-    user_addresses = db.session.query(User.user_id, Address.postal_code).join(Address).all()
-    user_regions = {user_id: get_region(postal_code) for user_id, postal_code in user_addresses}
-
-    # Fetch product sales and categorize into regions
-    product_sales = (
-        db.session.query(Order.user_id, OrderDetail.product_id, func.sum(OrderDetail.quantity).label('total_sold'))
-        .join(OrderDetail, Order.order_id == OrderDetail.order_id)
-        .group_by(OrderDetail.product_id, Order.user_id)
+    # Fetch orders along with their region based on the user's address
+    order_data = (
+        db.session.query(
+            Address.postal_code,  # Get postal code from Address table
+            OrderDetail.product_id, 
+            func.sum(OrderDetail.quantity).label('total_sold')
+        )
+        .join(Order, Order.order_id == OrderDetail.order_id)  # Join Orders to OrderDetails
+        .join(User, Order.user_id == User.user_id)  # Join Orders to Users
+        .join(
+            Address, 
+            (Address.user_id == User.user_id) & 
+            (Address.created_at <= Order.created_at)  # Get address valid at order time
+        )
+        .group_by(Address.postal_code, OrderDetail.product_id)
         .all()
     )
 
+    # Categorize product sales into regions
     region_sales = {region: {} for region in REGIONS.keys()}
 
-    for user_id, product_id, total_sold in product_sales:
-        region = user_regions.get(user_id, "Unknown")
+    for postal_code, product_id, total_sold in order_data:
+        region = get_region(postal_code)  # Determine region using postal code
         if region in region_sales:
-            if product_id in region_sales[region]:
-                region_sales[region][product_id] += total_sold
-            else:
-                region_sales[region][product_id] = total_sold
+            region_sales[region][product_id] = region_sales[region].get(product_id, 0) + total_sold
 
     # Get product details for the top 5 products per region
     for region, sales in region_sales.items():
@@ -321,5 +325,6 @@ def regional_popular_products():
         ]
 
     return render_template('regional_popular_products.html', region_products=region_products)
+
 
 
