@@ -449,22 +449,24 @@ def monitor_progress():
     )
 
     
-    status_count = {status: 0 for status in ['Dispatched', 'Out for Delivery', 'Delivered', 'Failed Attempt', 'In Transit']}
+    status_count = {'dispatched': 0, 'out for delivery': 0, 'delivered': 0, 'failed attempt': 0, 'in transit': 0}
 
     for c in couriers:
-        normalized_status = c.status.strip().title()  # Ensures correct casing
-        if normalized_status in status_count:  # Avoid KeyError
+        normalized_status = c.status.strip().lower()  # Convert to lowercase for consistency
+        if normalized_status in status_count:
             status_count[normalized_status] += 1
 
 
 
+
     bar_fig = px.bar(
-        x=list(status_count.keys()),
-        y=list(status_count.values()),
-        labels={'x': 'Delivery Status', 'y': 'Count'},
-        title="Delivery Status Distribution",
-        color_discrete_sequence=['#4CAF50']  
-    )
+    x=['Dispatched', 'Out for Delivery', 'Delivered', 'Failed Attempt', 'In Transit'],
+    y=[status_count['dispatched'], status_count['out for delivery'], status_count['delivered'], status_count['failed attempt'], status_count['in transit']],
+    labels={'x': 'Delivery Status', 'y': 'Count'},
+    title="Delivery Status Distribution",
+    color_discrete_sequence=['#4CAF50']
+)
+
 
    
     line_chart_html = pio.to_html(line_fig, full_html=False)
@@ -483,6 +485,7 @@ def monitor_progress():
         in_transit_orders=in_transit_orders,
         all_orders=all_orders,
         user=user,
+        out_for_delivery=status_count.get("Out for delivery"),
         delivered_orders_list=delivered_orders_list 
     )
 
